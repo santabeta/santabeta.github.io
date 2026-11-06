@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SI MBOJO – Izin Keluar Non-Dinas KPP Pratama Raba Bima</title>
+<meta name="theme-color" content="#0b2e59">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="SI MBOJO">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 rx=%2222%22 fill=%22%230b2e59%22/%3E%3Ctext x=%2250%22 y=%2268%22 font-size=%2252%22 text-anchor=%22middle%22 fill=%22%23F2A900%22 font-family=%22Arial%22 font-weight=%22bold%22%3ESM%3C/text%3E%3C/svg%3E">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'media',
+    theme: { extend: {
+      colors: {
+        navy: { 950:'#04142b', 900:'#071d3b', 800:'#0b2e59', 700:'#0f3d73', 600:'#13509a' },
+        djp:  { DEFAULT:'#005FAC', light:'#2b7fd0' },
+        gold: { DEFAULT:'#F2A900', dark:'#c98c00' },
+        canvas:'rgb(var(--canvas) / <alpha-value>)', surface:'rgb(var(--surface) / <alpha-value>)',
+        surface2:'rgb(var(--surface2) / <alpha-value>)', ink:'rgb(var(--ink) / <alpha-value>)',
+        muted:'rgb(var(--muted) / <alpha-value>)', line:'rgb(var(--line) / <alpha-value>)'
+      },
+      fontFamily: {
+        sans: ['"Plus Jakarta Sans"','ui-sans-serif','system-ui','Segoe UI','Roboto','sans-serif'],
+        mono: ['"JetBrains Mono"','ui-monospace','SFMono-Regular','Consolas','monospace']
+      }
+    } }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<style>
+  :root{ --canvas:238 242 247; --surface:255 255 255; --surface2:246 248 251; --ink:15 23 42; --muted:92 107 128; --line:222 229 238; color-scheme:light; }
+  @media (prefers-color-scheme: dark){
+    :root{ --canvas:5 12 24; --surface:12 23 41; --surface2:18 32 56; --ink:226 232 240; --muted:145 160 182; --line:33 49 77; color-scheme:dark; }
+  }
+  body{ background:rgb(var(--canvas)); color:rgb(var(--ink)); }
+  .card{ background:rgb(var(--surface)); border:1px solid rgb(var(--line)); border-radius:1.1rem;
+         box-shadow:0 1px 2px rgb(4 20 43 / .04), 0 12px 32px -18px rgb(11 46 89 / .35); }
+  .field{ width:100%; background:rgb(var(--surface2)); border:1px solid rgb(var(--line)); color:rgb(var(--ink));
+          border-radius:.75rem; padding:.72rem .9rem; font-size:.95rem; transition:border-color .15s, box-shadow .15s; }
+  .field::placeholder{ color:rgb(var(--muted) / .75); }
+  .field:focus{ outline:none; border-color:#2b7fd0; box-shadow:0 0 0 4px rgb(43 127 208 / .2); }
+  .field:disabled{ opacity:.6; }
+  .label{ display:block; font-size:.8rem; font-weight:600; color:rgb(var(--muted)); margin-bottom:.35rem; }
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:.55rem; font-weight:700; font-size:.92rem;
+        border-radius:.8rem; padding:.78rem 1.15rem; transition:background-color .15s, transform .1s, opacity .15s; }
+  .btn:active:not(:disabled){ transform:scale(.98); }
+  .btn:focus-visible, .tab-btn:focus-visible{ outline:3px solid #F2A900; outline-offset:2px; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; }
+  .btn-primary{ background:#0b2e59; color:#fff; } .btn-primary:hover:not(:disabled){ background:#0f3d73; }
+  .btn-gold{ background:#F2A900; color:#071d3b; } .btn-gold:hover:not(:disabled){ background:#ffb910; }
+  .btn-success{ background:#047857; color:#fff; } .btn-success:hover:not(:disabled){ background:#065f46; }
+  .btn-danger{ background:#dc2626; color:#fff; } .btn-danger:hover:not(:disabled){ background:#b91c1c; }
+  .btn-ghost{ background:rgb(var(--surface2)); color:rgb(var(--ink)); border:1px solid rgb(var(--line)); }
+  .btn-ghost:hover:not(:disabled){ border-color:#2b7fd0; }
+  .btn-sm{ padding:.5rem .8rem; font-size:.8rem; border-radius:.65rem; }
+  .badge{ display:inline-flex; align-items:center; gap:.4rem; padding:.28rem .7rem; border-radius:999px; font-size:.72rem; font-weight:700; white-space:nowrap; }
+  .badge-wait{ background:rgb(245 158 11 / .15); color:#b45309; }
+  .badge-ok{ background:rgb(37 99 235 / .12); color:#1d4ed8; }
+  .badge-run{ background:rgb(242 169 0 / .2); color:#8a5a00; }
+  .badge-done{ background:rgb(16 185 129 / .14); color:#047857; }
+  .badge-rej{ background:rgb(239 68 68 / .13); color:#b91c1c; }
+  .badge-cancel{ background:rgb(100 116 139 / .15); color:rgb(var(--muted)); }
+  @media (prefers-color-scheme: dark){
+    .badge-wait{ color:#fbbf24; } .badge-ok{ color:#93c5fd; } .badge-run{ color:#fcd34d; } .badge-done{ color:#6ee7b7; } .badge-rej{ color:#fca5a5; }
+  }
+  .header-bg{ background:
+      radial-gradient(1200px 300px at 85% -40%, rgb(242 169 0 / .22), transparent 60%),
+      linear-gradient(135deg, #04142b 0%, #0b2e59 55%, #0f3d73 100%); }
+  .tab-btn{ color:#cbd5e1; font-weight:700; transition:color .15s, background-color .15s; }
+  .tab-btn.active{ color:#071d3b; background:#F2A900; }
+  .tab-btn:not(.active):hover{ color:#fff; background:rgb(255 255 255 / .08); }
+  .pass-perf{ position:relative; border-top:2px dashed rgb(var(--line)); margin:0 1.1rem; }
+  .pass-perf::before, .pass-perf::after{ content:""; position:absolute; top:-11px; width:20px; height:20px; border-radius:50%;
+       background:rgb(var(--canvas)); border:1px solid rgb(var(--line)); }
+  .pass-perf::before{ left:-2.05rem; clip-path:inset(0 0 0 50%); }
+  .pass-perf::after{ right:-2.05rem; clip-path:inset(0 50% 0 0); }
+  .timer{ font-family:'JetBrains Mono', ui-monospace, monospace; font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
+  .step-dot{ width:1.9rem; height:1.9rem; border-radius:999px; display:grid; place-items:center; font-size:.75rem; font-weight:800; }
+  .live-dot{ width:.6rem; height:.6rem; border-radius:999px; background:#ef4444; animation:ping 1.6s infinite; }
+  @keyframes ping{ 0%{ box-shadow:0 0 0 0 rgb(239 68 68 / .55);} 80%,100%{ box-shadow:0 0 0 10px rgb(239 68 68 / 0);} }
+  @keyframes slideUp{ from{ transform:translateY(14px); opacity:0;} to{ transform:none; opacity:1;} }
+  .toast, .modal-panel{ animation:slideUp .22s ease-out; }
+  @media (prefers-reduced-motion: reduce){ .live-dot, .toast, .modal-panel{ animation:none; } }
+  .tbl th{ font-size:.72rem; font-weight:700; color:rgb(var(--muted)); text-align:left; padding:.7rem .8rem;
+           background:rgb(var(--surface2)); border-bottom:1px solid rgb(var(--line)); white-space:nowrap; position:sticky; top:0; }
+  .tbl td{ font-size:.84rem; padding:.7rem .8rem; border-bottom:1px solid rgb(var(--line)); vertical-align:top; }
+  .scroll-x{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .pin-input{ letter-spacing:.6em; text-align:center; font-family:'JetBrains Mono', monospace; font-size:1.4rem; font-weight:700; }
+  .spin{ animation:spin 1s linear infinite; } @keyframes spin{ to{ transform:rotate(360deg);} }
+</style>
+</head>
+
+<body class="font-sans antialiased min-h-screen">
+
+<!-- ================= LOADING ================= -->
+<section id="scrLoading" class="min-h-screen grid place-items-center header-bg text-white">
+  <div class="text-center px-6">
+    <i class="fa-solid fa-building-columns text-gold text-4xl mb-4"></i>
+    <p class="font-extrabold text-lg">KPP Pratama Raba Bima</p>
+    <p id="loadingMsg" class="text-sm text-slate-300 mt-1"><i class="fa-solid fa-circle-notch spin mr-1"></i> Memuat aplikasi…</p>
+  </div>
+</section>
+
+<!-- ================= LOGIN ================= -->
+<section id="scrLogin" class="hidden min-h-screen header-bg px-4 py-10 grid place-items-center">
+  <div class="w-full max-w-sm">
+    <div class="text-center text-white mb-6">
+      <div class="w-16 h-16 mx-auto rounded-2xl bg-white/10 ring-1 ring-white/20 grid place-items-center mb-4">
+        <i class="fa-solid fa-building-columns text-gold text-2xl"></i>
+      </div>
+      <h1 class="text-xl font-extrabold">KPP Pratama Raba Bima</h1>
+      <p class="text-sm text-slate-300">Sistem Izin Keluar Non-Dinas</p>
+    </div>
+    <form id="formLogin" class="card p-6" novalidate>
+      <h2 class="font-extrabold text-lg mb-4">Masuk</h2>
+      <label class="label" for="lNip">NIP</label>
+      <input id="lNip" class="field font-mono" type="text" inputmode="numeric" autocomplete="username" placeholder="18 digit NIP" maxlength="21">
+      <label class="label mt-4" for="lPin">PIN (6 digit)</label>
+      <div class="relative">
+        <input id="lPin" class="field pin-input pr-12" type="password" inputmode="numeric" autocomplete="current-password" maxlength="6" placeholder="••••••">
+        <button type="button" class="absolute right-3 top-1/2 -translate-y-1/2 text-muted px-1" data-toggle-pin="lPin" aria-label="Tampilkan PIN"><i class="fa-solid fa-eye"></i></button>
+      </div>
+      <p id="loginErr" class="hidden mt-4 text-sm font-semibold text-red-600 dark:text-red-400 bg-red-500/10 rounded-lg p-3"></p>
+      <button id="btnLogin" type="submit" class="btn btn-primary w-full mt-5"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
+      <p class="text-xs text-muted mt-4 leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i>
+        Belum punya PIN atau lupa PIN? Minta PIN awal ke Subbagian Umum dan Kepatuhan Internal.</p>
+    </form>
+  </div>
+</section>
+
+<!-- ================= GANTI PIN ================= -->
+<section id="scrPin" class="hidden min-h-screen header-bg px-4 py-10 grid place-items-center">
+  <form id="formPin" class="card p-6 w-full max-w-sm" novalidate>
+    <div class="w-12 h-12 rounded-xl bg-gold/20 grid place-items-center mb-3"><i class="fa-solid fa-key text-gold-dark text-xl"></i></div>
+    <h2 id="pinTitle" class="font-extrabold text-lg">Buat PIN baru</h2>
+    <p id="pinDesc" class="text-sm text-muted mt-1 mb-4">Ini login pertama Anda. Ganti PIN awal dengan PIN pribadi yang hanya Anda ketahui.</p>
+    <div id="oldPinWrap" class="hidden mb-4">
+      <label class="label" for="pOld">PIN lama</label>
+      <input id="pOld" class="field pin-input" type="password" inputmode="numeric" maxlength="6" autocomplete="current-password">
+    </div>
+    <label class="label" for="pNew">PIN baru (6 digit)</label>
+    <input id="pNew" class="field pin-input" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password">
+    <label class="label mt-4" for="pNew2">Ulangi PIN baru</label>
+    <input id="pNew2" class="field pin-input" type="password" inputmode="numeric" maxlength="6" autocomplete="new-password">
+    <p class="text-xs text-muted mt-3">Hindari angka berurutan, angka sama, atau tanggal lahir.</p>
+    <p id="pinErr" class="hidden mt-3 text-sm font-semibold text-red-600 dark:text-red-400 bg-red-500/10 rounded-lg p-3"></p>
+    <div class="flex gap-2 mt-5">
+      <button id="btnPinCancel" type="button" class="btn btn-ghost hidden">Batal</button>
+      <button id="btnPinSave" type="submit" class="btn btn-primary flex-1"><i class="fa-solid fa-check"></i> Simpan PIN</button>
+    </div>
+  </form>
+</section>
+
+<!-- ================= APLIKASI ================= -->
+<div id="scrApp" class="hidden">
+  <header class="header-bg text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-5 pb-4 flex items-center gap-3 sm:gap-4">
+      <div class="shrink-0 w-11 h-11 sm:w-14 sm:h-14 rounded-2xl bg-white/10 ring-1 ring-white/20 grid place-items-center">
+        <i class="fa-solid fa-building-columns text-gold text-lg sm:text-2xl"></i>
+      </div>
+      <div class="min-w-0 flex-1">
+        <h1 class="text-[0.95rem] sm:text-xl lg:text-2xl font-extrabold leading-tight tracking-tight">KPP Pratama Raba Bima</h1>
+        <p class="text-xs sm:text-sm text-slate-300 font-medium">Sistem Izin Keluar Non-Dinas</p>
+      </div>
+      <div class="hidden md:block text-right mr-2">
+        <div id="hdrTime" class="timer text-xl font-bold text-gold">--.--.--</div>
+        <div id="hdrDate" class="text-xs text-slate-300">–</div>
+      </div>
+      <div class="flex items-center gap-1">
+        <button id="btnChangePin" class="w-10 h-10 rounded-xl hover:bg-white/10 grid place-items-center" title="Ganti PIN" aria-label="Ganti PIN"><i class="fa-solid fa-key"></i></button>
+        <button id="btnLogout" class="w-10 h-10 rounded-xl hover:bg-white/10 grid place-items-center" title="Keluar" aria-label="Keluar"><i class="fa-solid fa-right-from-bracket"></i></button>
+      </div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pb-4 flex flex-col sm:flex-row sm:items-center gap-3">
+      <div id="userChip" class="text-sm flex items-center gap-2 min-w-0"></div>
+      <nav id="tabNav" class="hidden sm:ml-auto grid grid-cols-2 gap-1 p-1 rounded-2xl bg-white/5 ring-1 ring-white/10 sm:w-[30rem]" role="tablist">
+        <button class="tab-btn active rounded-xl px-3 py-2.5 text-xs sm:text-sm flex items-center justify-center gap-2" data-tab="pegawai" role="tab">
+          <i class="fa-solid fa-user"></i><span>Layar Pegawai</span>
+        </button>
+        <button class="tab-btn rounded-xl px-3 py-2.5 text-xs sm:text-sm flex items-center justify-center gap-2" data-tab="atasan" role="tab">
+          <i class="fa-solid fa-user-tie"></i><span class="truncate">Atasan &amp; Rekap</span>
+          <span id="tabBadge" class="hidden min-w-[1.25rem] h-5 px-1.5 rounded-full bg-red-500 text-white text-[0.68rem] font-extrabold grid place-items-center">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <div id="netBanner" class="hidden bg-amber-500 text-navy-900 text-sm font-semibold text-center px-4 py-2">
+    <i class="fa-solid fa-wifi mr-1"></i> Koneksi ke server terputus. Mencoba lagi otomatis…
+  </div>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+
+    <!-- ========== LAYAR PEGAWAI ========== -->
+    <section id="view-pegawai" class="grid lg:grid-cols-12 gap-6 items-start">
+      <div class="lg:col-span-5 lg:order-2 space-y-6" id="statusWrap">
+        <div>
+          <h2 class="text-lg font-extrabold mb-3 flex items-center gap-2"><i class="fa-solid fa-ticket text-djp"></i> Status Izin Saya</h2>
+          <div id="statusPanel"></div>
+        </div>
+        <div class="card p-5">
+          <h3 class="font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-muted"></i> Riwayat Terakhir</h3>
+          <div id="myHistory" class="space-y-2"></div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-7 lg:order-1">
+        <form id="formIzin" class="card p-5 sm:p-7" novalidate>
+          <div class="flex items-start justify-between gap-3 mb-5">
+            <div>
+              <h2 class="text-lg sm:text-xl font-extrabold">Formulir Permohonan Izin Keluar</h2>
+              <p class="text-sm text-muted mt-1">Izin keluar kantor untuk keperluan non-dinas pada jam kerja.</p>
+            </div>
+            <i class="fa-solid fa-file-signature text-2xl text-gold hidden sm:block"></i>
+          </div>
+
+          <div id="profileCard" class="grid sm:grid-cols-2 gap-3 rounded-xl bg-surface2 border border-line p-4"></div>
+          <div id="formNotice" class="hidden mt-4 rounded-xl p-4 text-sm font-semibold"></div>
+
+          <fieldset id="formFields" class="mt-5">
+            <legend class="label">Keperluan</legend>
+            <div id="keperluanGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+
+            <div class="mt-5">
+              <div class="flex items-end justify-between">
+                <label class="label" for="fKet">Detail keterangan</label>
+                <span id="ketCount" class="text-[0.7rem] text-muted mb-1.5">0/300</span>
+              </div>
+              <textarea id="fKet" class="field resize-y min-h-[96px]" maxlength="300" placeholder="Contoh: Menyetor angsuran di Bank BRI Unit Raba, perkiraan 45 menit."></textarea>
+            </div>
+
+            <div class="mt-5 rounded-xl border border-gold/50 bg-gold/10 p-4">
+              <label class="flex gap-3 cursor-pointer">
+                <input id="fPakta" type="checkbox" class="mt-1 w-5 h-5 shrink-0 accent-[#0b2e59]">
+                <span class="text-sm leading-relaxed">
+                  <span class="font-bold block mb-1"><i class="fa-solid fa-shield-halved text-gold-dark mr-1"></i> Pakta Integritas</span>
+                  Saya menyatakan dengan sebenar-benarnya bahwa izin ini digunakan hanya untuk keperluan non-dinas yang saya sebutkan,
+                  saya akan kembali ke kantor sesegera mungkin dan mencatat jam kembali (Clock Out), serta bersedia menerima sanksi
+                  sesuai ketentuan disiplin PNS apabila keterangan ini tidak benar.
+                </span>
+              </label>
+            </div>
+
+            <div class="mt-6 flex flex-col-reverse sm:flex-row gap-3 sm:items-center sm:justify-between">
+              <p class="text-xs text-muted"><i class="fa-solid fa-circle-info mr-1"></i> Centang pakta integritas untuk mengaktifkan tombol kirim.</p>
+              <button id="btnSubmit" type="submit" class="btn btn-primary w-full sm:w-auto" disabled>
+                <i class="fa-solid fa-paper-plane"></i> Kirim Permohonan
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+    </section>
+
+    <!-- ========== LAYAR ATASAN ========== -->
+    <section id="view-atasan" class="hidden space-y-6">
+      <div>
+        <h2 class="text-xl font-extrabold">Approval &amp; Pemantauan</h2>
+        <p id="atasanScope" class="text-sm text-muted"></p>
+      </div>
+
+      <div id="statsGrid" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4"></div>
+
+      <div class="grid lg:grid-cols-2 gap-6 items-start">
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-extrabold flex items-center gap-2"><i class="fa-solid fa-inbox text-djp"></i> Antrean Permohonan</h3>
+            <span id="queueCount" class="badge badge-wait">0 menunggu</span>
+          </div>
+          <div id="queueList" class="space-y-3"></div>
+          <div id="othersWrap" class="hidden mt-5">
+            <h4 class="text-sm font-bold text-muted mb-2">Menunggu atasan lain (pantauan Admin)</h4>
+            <div id="othersList" class="space-y-2"></div>
+          </div>
+        </div>
+
+        <div class="card p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-extrabold flex items-center gap-2"><span class="live-dot"></span> Sedang di Luar Kantor</h3>
+            <span id="liveCount" class="badge badge-run">0 pegawai</span>
+          </div>
+          <div id="liveList" class="space-y-3"></div>
+          <div id="approvedWaitWrap" class="mt-5 hidden">
+            <h4 class="text-sm font-bold text-muted mb-2">Disetujui, belum Clock In</h4>
+            <div id="approvedWaitList" class="space-y-2"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rekap -->
+      <div class="card p-5 sm:p-6">
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-5">
+          <div>
+            <h3 class="font-extrabold text-lg flex items-center gap-2"><i class="fa-solid fa-file-excel text-emerald-600"></i> Rekapitulasi Riwayat Izin</h3>
+            <p class="text-sm text-muted">Data difilter berdasarkan tanggal pengajuan (WITA).</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-ghost btn-sm" data-range="today">Hari ini</button>
+            <button class="btn btn-ghost btn-sm" data-range="7">7 hari</button>
+            <button class="btn btn-ghost btn-sm" data-range="month">Bulan ini</button>
+            <button class="btn btn-ghost btn-sm" data-range="year">Tahun ini</button>
+          </div>
+        </div>
+        <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
+          <div><label class="label" for="rStart">Tanggal mulai</label><input id="rStart" type="date" class="field"></div>
+          <div><label class="label" for="rEnd">Tanggal selesai</label><input id="rEnd" type="date" class="field"></div>
+          <div><label class="label" for="rSeksi">Seksi / Subbagian</label><select id="rSeksi" class="field"><option value="">Semua seksi/subbagian</option></select></div>
+          <div>
+            <label class="label" for="rStatus">Status</label>
+            <select id="rStatus" class="field">
+              <option value="">Semua status</option>
+              <option value="SELESAI">Selesai</option>
+              <option value="BERLANGSUNG">Sedang di luar</option>
+              <option value="DISETUJUI">Disetujui (belum Clock In)</option>
+              <option value="MENUNGGU">Menunggu approval</option>
+              <option value="DITOLAK">Ditolak</option>
+              <option value="DIBATALKAN">Dibatalkan</option>
+            </select>
+          </div>
+          <button id="btnDownload" class="btn btn-success w-full"><i class="fa-solid fa-download"></i> Download Rekap Excel (.xlsx)</button>
+        </div>
+        <div id="rekapSummary" class="mt-5 flex flex-wrap gap-x-6 gap-y-1 text-sm"></div>
+        <div class="mt-3 rounded-xl border border-line scroll-x max-h-[480px] overflow-y-auto">
+          <table class="tbl w-full min-w-[900px]">
+            <thead><tr><th>No</th><th>Tanggal</th><th>Pegawai</th><th>Seksi</th><th>Keperluan</th><th>Atasan</th><th>Clock In</th><th>Clock Out</th><th>Durasi</th><th>Status</th></tr></thead>
+            <tbody id="rekapBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Admin: reset PIN -->
+      <div id="adminCard" class="hidden card p-5 sm:p-6">
+        <h3 class="font-extrabold text-lg flex items-center gap-2"><i class="fa-solid fa-user-shield text-djp"></i> Reset PIN Pegawai</h3>
+        <p class="text-sm text-muted mt-1">Untuk pegawai yang lupa PIN atau terblokir. PIN awal baru wajib diganti saat login berikutnya.</p>
+        <form id="formReset" class="mt-4 flex flex-col sm:flex-row gap-3" novalidate>
+          <input id="resetNip" class="field font-mono sm:max-w-xs" type="text" inputmode="numeric" maxlength="21" placeholder="NIP pegawai (18 digit)">
+          <button id="btnReset" type="submit" class="btn btn-primary"><i class="fa-solid fa-rotate"></i> Buat PIN awal baru</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-7xl mx-auto px-4 sm:px-6 pb-8 text-center text-xs text-muted">
+    Kantor Pelayanan Pajak Pratama Raba Bima · Direktorat Jenderal Pajak · Kementerian Keuangan RI
+  </footer>
+</div>
+
+<!-- ================= MODAL ================= -->
+<div id="modal" class="fixed inset-0 z-50 hidden items-end sm:items-center justify-center sm:p-4" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" data-close></div>
+  <div class="modal-panel relative card w-full sm:max-w-md rounded-b-none sm:rounded-2xl p-5 sm:p-6" style="padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))">
+    <h3 id="modalTitle" class="text-lg font-extrabold mb-2"></h3>
+    <div id="modalBody" class="text-sm"></div>
+    <div class="flex gap-2 justify-end mt-6">
+      <button id="modalCancel" class="btn btn-ghost" data-close>Batal</button>
+      <button id="modalOk" class="btn btn-primary">OK</button>
+    </div>
+  </div>
+</div>
+
+<div id="toastWrap" class="fixed z-[60] left-1/2 -translate-x-1/2 sm:left-auto sm:right-5 sm:translate-x-0 flex flex-col gap-2 w-[calc(100%-2rem)] sm:w-96"
+     style="bottom:calc(1rem + env(safe-area-inset-bottom,0px))"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* ===================== KONSTANTA & STATE ===================== */
+  /* ==== ALAMAT SERVER (URL Web App /exec dari Apps Script) ==== */
+  const API_URL = 'https://script.google.com/macros/s/AKfycby9XGPimLmdSQ89XXJD6wdy_o-WDhZI4Ch8b0hRx2Y0nfVIXZ6mMqkrcfY3oEPDH0528g/exec';
+
+  const TZ = 'Asia/Makassar';
+  const TKEY = 'izinKPPRabaBima_token';
+  const POLL_MS = 15000;
+  const LONG_OUT_MS = 2 * 60 * 60 * 1000;
+  const KEPERLUAN = [
+    { v:'Ke Bank', icon:'fa-building-columns' }, { v:'RS/Klinik', icon:'fa-hospital' },
+    { v:'Keluarga/Pribadi', icon:'fa-people-roof' }, { v:'Lainnya', icon:'fa-ellipsis' }
+  ];
+  const STATUS = {
+    MENUNGGU:    { label:'Menunggu Approval Atasan', cls:'badge-wait',   icon:'fa-hourglass-half' },
+    DISETUJUI:   { label:'Disetujui',                cls:'badge-ok',     icon:'fa-circle-check' },
+    BERLANGSUNG: { label:'Sedang di Luar Kantor',    cls:'badge-run',    icon:'fa-person-walking-arrow-right' },
+    SELESAI:     { label:'Selesai',                  cls:'badge-done',   icon:'fa-flag-checkered' },
+    DITOLAK:     { label:'Ditolak',                  cls:'badge-rej',    icon:'fa-circle-xmark' },
+    DIBATALKAN:  { label:'Dibatalkan',               cls:'badge-cancel', icon:'fa-ban' }
+  };
+  const ACTIVE = ['MENUNGGU', 'DISETUJUI', 'BERLANGSUNG'];
+
+  const MEM = {};
+  const store = {
+    get: k => { try { return localStorage.getItem(k); } catch (e) { return MEM[k] || null; } },
+    set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) { MEM[k] = v; } },
+    del: k => { try { localStorage.removeItem(k); } catch (e) {} delete MEM[k]; }
+  };
+
+  let TOKEN = store.get(TKEY);
+  let STATE = null, LASTKEY = '', OFFSET = 0, TAB = 'pegawai', REKAP = [], pollTimer = null, rekapLoaded = false;
+
+  /* ===================== UTIL ===================== */
+  const $  = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const pad = n => String(n).padStart(2, '0');
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  const now = () => Date.now() + OFFSET;
+  const parts = ms => {
+    const o = {};
+    new Intl.DateTimeFormat('en-CA', { timeZone:TZ, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit', hourCycle:'h23' })
+      .formatToParts(new Date(ms)).forEach(p => { o[p.type] = p.value; });
+    return o;
+  };
+  const ymd = ms => { const p = parts(ms); return `${p.year}-${p.month}-${p.day}`; };
+  const fmtHM  = ms => { if (!ms) return '-'; const p = parts(ms); return `${p.hour}.${p.minute}`; };
+  const fmtHMS2 = ms => { if (!ms) return '-'; const p = parts(ms); return `${p.hour}.${p.minute}.${p.second}`; };
+  const fmtDateShort = ms => new Date(ms).toLocaleDateString('id-ID', { timeZone:TZ, day:'2-digit', month:'short', year:'numeric' });
+  const fmtDateLong = s => new Date(s + 'T12:00:00').toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
+  const fmtHMS = ms => { ms = Math.max(0, ms || 0); const s = Math.floor(ms / 1000);
+    return `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`; };
+  const fmtDur = sec => { if (sec == null) return '-'; if (sec < 60) return '< 1 menit';
+    const m = Math.floor(sec / 60), h = Math.floor(m / 60), mm = m % 60; return h ? `${h} jam ${mm} menit` : `${mm} menit`; };
+  const initials = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  const show = id => ['scrLoading', 'scrLogin', 'scrPin', 'scrApp'].forEach(s => $('#' + s).classList.toggle('hidden', s !== id));
+
+  /* ===================== SERVER CALL ===================== */
+  async function call(action, payload) {
+    let res;
+    const ctrl = new AbortController();
+    const to = setTimeout(() => ctrl.abort(), 45000);
+    try {
+      const r = await fetch(API_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action, token: TOKEN, payload: payload || {} }), // text/plain: tanpa preflight CORS
+        redirect: 'follow',
+        credentials: 'omit',
+        cache: 'no-store',
+        signal: ctrl.signal
+      });
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      res = await r.json();
+    } catch (e) {
+      const err = new Error('Gagal terhubung ke server. Periksa koneksi internet lalu coba lagi.');
+      err.network = true; err.cause = e;
+      throw err;
+    } finally { clearTimeout(to); }
+    $('#netBanner').classList.add('hidden');
+    if (res && res.ok) return res.data;
+    const err = new Error((res && res.error) || 'Server tidak merespons.');
+    err.code = res && res.code;
+    if (err.code === 'AUTH') { clearSession(); showLogin(err.message); }
+    else if (err.code === 'MUST_CHANGE') { showPin(true); }
+    throw err;
+  }
+  async function withBusy(btn, fn) {
+    const html = btn ? btn.innerHTML : '';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-circle-notch spin"></i> Memproses…'; }
+    try { return await fn(); }
+    finally { if (btn) { btn.disabled = false; btn.innerHTML = html; } }
+  }
+
+  /* ===================== TOAST & MODAL ===================== */
+  function toast(msg, type = 'success') {
+    const conf = { success:['fa-circle-check','bg-emerald-600'], error:['fa-circle-exclamation','bg-red-600'],
+                   warn:['fa-triangle-exclamation','bg-amber-500'], info:['fa-circle-info','bg-djp'] }[type] || ['fa-circle-info','bg-djp'];
+    const el = document.createElement('div');
+    el.className = 'toast card flex items-start gap-3 p-3.5 pr-4';
+    el.innerHTML = `<span class="${conf[1]} text-white w-8 h-8 shrink-0 rounded-lg grid place-items-center"><i class="fa-solid ${conf[0]}"></i></span>
+                    <p class="text-sm font-medium pt-1.5">${esc(msg)}</p>`;
+    $('#toastWrap').appendChild(el);
+    setTimeout(() => { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(() => el.remove(), 300); }, 4200);
+  }
+  let modalHandler = null;
+  function openModal({ title, body, okText = 'OK', okClass = 'btn-primary', onOk, hideCancel = false }) {
+    $('#modalTitle').textContent = title;
+    $('#modalBody').innerHTML = body;
+    const ok = $('#modalOk'); ok.className = `btn ${okClass}`; ok.innerHTML = okText; ok.disabled = false;
+    $('#modalCancel').classList.toggle('hidden', hideCancel);
+    modalHandler = onOk || null;
+    const m = $('#modal'); m.classList.remove('hidden'); m.classList.add('flex');
+    ($('#modalBody textarea, #modalBody input') || ok).focus();
+  }
+  function closeModal() { const m = $('#modal'); m.classList.add('hidden'); m.classList.remove('flex'); modalHandler = null; }
+  $('#modalOk').addEventListener('click', async () => {
+    if (!modalHandler) return closeModal();
+    const ok = $('#modalOk'); ok.disabled = true;
+    try { const r = await modalHandler(); if (r !== false) closeModal(); }
+    finally { ok.disabled = false; }
+  });
+  $$('#modal [data-close]').forEach(b => b.addEventListener('click', closeModal));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  /* ===================== AUTH SCREENS ===================== */
+  function clearSession() { TOKEN = null; store.del(TKEY); STATE = null; LASTKEY = ''; rekapLoaded = false; stopPolling(); }
+  function showLogin(msg) {
+    show('scrLogin');
+    const e = $('#loginErr'); e.textContent = msg || ''; e.classList.toggle('hidden', !msg);
+    $('#lPin').value = '';
+    setTimeout(() => ($('#lNip').value ? $('#lPin') : $('#lNip')).focus(), 50);
+  }
+  let pinForced = false;
+  function showPin(forced) {
+    pinForced = forced;
+    $('#pinTitle').textContent = forced ? 'Buat PIN baru' : 'Ganti PIN';
+    $('#pinDesc').textContent = forced
+      ? 'Ini login pertama Anda (atau PIN baru direset). Ganti PIN awal dengan PIN pribadi yang hanya Anda ketahui.'
+      : 'Masukkan PIN lama, lalu buat PIN baru.';
+    $('#oldPinWrap').classList.toggle('hidden', forced);
+    $('#btnPinCancel').classList.toggle('hidden', forced);
+    ['#pOld', '#pNew', '#pNew2'].forEach(s => $(s).value = '');
+    $('#pinErr').classList.add('hidden');
+    show('scrPin');
+    setTimeout(() => (forced ? $('#pNew') : $('#pOld')).focus(), 50);
+  }
+
+  $$('.pin-input, #lNip, #resetNip').forEach(i => i.addEventListener('input', () => { i.value = i.value.replace(/[^\d\s]/g, ''); }));
+  $$('[data-toggle-pin]').forEach(b => b.addEventListener('click', () => {
+    const i = $('#' + b.dataset.togglePin); const on = i.type === 'password';
+    i.type = on ? 'text' : 'password'; b.innerHTML = `<i class="fa-solid ${on ? 'fa-eye-slash' : 'fa-eye'}"></i>`;
+  }));
+
+  $('#formLogin').addEventListener('submit', async e => {
+    e.preventDefault();
+    const nip = $('#lNip').value.replace(/\s/g, ''), pin = $('#lPin').value;
+    const err = $('#loginErr');
+    if (!/^\d{18}$/.test(nip)) { err.textContent = 'NIP harus 18 digit angka.'; err.classList.remove('hidden'); return; }
+    if (!/^\d{6}$/.test(pin)) { err.textContent = 'PIN harus 6 digit angka.'; err.classList.remove('hidden'); return; }
+    await withBusy($('#btnLogin'), async () => {
+      try {
+        const r = await call('login', { nip, pin });
+        TOKEN = r.token; store.set(TKEY, TOKEN);
+        if (r.mustChange) showPin(true); else await enterApp();
+      } catch (ex) { err.textContent = ex.message; err.classList.remove('hidden'); $('#lPin').value = ''; }
+    });
+  });
+
+  $('#formPin').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('#pinErr');
+    const o = $('#pOld').value, n1 = $('#pNew').value, n2 = $('#pNew2').value;
+    const fail = m => { err.textContent = m; err.classList.remove('hidden'); };
+    if (!pinForced && !/^\d{6}$/.test(o)) return fail('Isi PIN lama (6 digit).');
+    if (!/^\d{6}$/.test(n1)) return fail('PIN baru harus 6 digit angka.');
+    if (n1 !== n2) return fail('Ulangan PIN baru tidak sama.');
+    await withBusy($('#btnPinSave'), async () => {
+      try {
+        await call('changePin', { oldPin: o, newPin: n1 });
+        toast('PIN berhasil disimpan. Jangan bagikan PIN Anda kepada siapa pun.');
+        await enterApp();
+      } catch (ex) { if (ex.code !== 'AUTH') fail(ex.message); }
+    });
+  });
+  $('#btnPinCancel').addEventListener('click', () => show('scrApp'));
+  $('#btnChangePin').addEventListener('click', () => showPin(false));
+  $('#btnLogout').addEventListener('click', () => openModal({
+    title: 'Keluar dari aplikasi?', body: '<p class="text-muted">Anda perlu memasukkan NIP dan PIN lagi untuk masuk.</p>',
+    okText: '<i class="fa-solid fa-right-from-bracket"></i> Keluar', okClass: 'btn-danger',
+    onOk: async () => { try { await call('logout'); } catch (e) {} clearSession(); showLogin(); }
+  }));
+
+  /* ===================== MASUK APLIKASI ===================== */
+  async function enterApp() {
+    await refreshState(true);
+    if (!STATE) return;
+    show('scrApp');
+    const isAtasan = STATE.me.isAtasan;
+    $('#tabNav').classList.toggle('hidden', !isAtasan);
+    $('#tabNav').classList.toggle('grid', isAtasan);
+    const saved = store.get('izinKPPRabaBima_tab');
+    showTab(isAtasan && saved === 'atasan' ? 'atasan' : 'pegawai');
+    startPolling();
+  }
+
+  async function refreshState(force) {
+    try {
+      const s = await call('state');
+      OFFSET = s.serverNow - Date.now();
+      const key = JSON.stringify(Object.assign({}, s, { serverNow: 0 }));
+      if (force || key !== LASTKEY) { LASTKEY = key; STATE = s; renderAll(); }
+    } catch (e) {
+      if (e.network) $('#netBanner').classList.remove('hidden');
+      else if (!e.code) toast(e.message, 'error');
+      if (force && !STATE && !e.code) { show('scrLoading'); $('#loadingMsg').textContent = e.message; }
+    }
+  }
+  function startPolling() {
+    stopPolling();
+    pollTimer = setInterval(() => { if (document.visibilityState === 'visible' && TOKEN && STATE) refreshState(); }, POLL_MS);
+  }
+  function stopPolling() { if (pollTimer) clearInterval(pollTimer); pollTimer = null; }
+  document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && TOKEN && STATE) refreshState(); });
+
+  /* ===================== TAB ===================== */
+  function showTab(name) {
+    if (name === 'atasan' && !(STATE && STATE.me.isAtasan)) name = 'pegawai';
+    TAB = name; store.set('izinKPPRabaBima_tab', name);
+    $$('.tab-btn').forEach(b => { const on = b.dataset.tab === name; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); });
+    $('#view-pegawai').classList.toggle('hidden', name !== 'pegawai');
+    $('#view-atasan').classList.toggle('hidden', name !== 'atasan');
+    if (name === 'atasan' && !rekapLoaded) { rekapLoaded = true; loadRekap(); }
+  }
+  $$('.tab-btn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+
+  /* ===================== FORM PEGAWAI ===================== */
+  $('#keperluanGrid').innerHTML = KEPERLUAN.map(k => `
+    <label class="cursor-pointer">
+      <input type="radio" name="keperluan" value="${esc(k.v)}" class="peer sr-only">
+      <div class="h-full rounded-xl border border-line bg-surface2 px-3 py-3 text-center transition
+                  peer-checked:border-navy-800 peer-checked:bg-navy-800 peer-checked:text-white
+                  peer-focus-visible:ring-4 peer-focus-visible:ring-gold/50 hover:border-djp-light">
+        <i class="fa-solid ${k.icon} text-lg mb-1 block"></i>
+        <span class="text-xs sm:text-[0.8rem] font-bold">${esc(k.v)}</span>
+      </div>
+    </label>`).join('');
+  $('#fPakta').addEventListener('change', e => { $('#btnSubmit').disabled = !e.target.checked; });
+  $('#fKet').addEventListener('input', e => { $('#ketCount').textContent = `${e.target.value.length}/300`; });
+
+  $('#formIzin').addEventListener('submit', async e => {
+    e.preventDefault();
+    const kep = $('input[name="keperluan"]:checked');
+    const ket = $('#fKet').value.trim();
+    if (!kep) return toast('Pilih jenis keperluan.', 'warn');
+    if (ket.length < 5) { $('#fKet').focus(); return toast('Tulis detail keterangan (minimal 5 karakter).', 'warn'); }
+    if (!$('#fPakta').checked) return toast('Centang Pakta Integritas sebelum mengirim permohonan.', 'warn');
+    await withBusy($('#btnSubmit'), async () => {
+      try {
+        await call('submit', { keperluan: kep.value, keterangan: ket, pakta: true });
+        kep.checked = false; $('#fKet').value = ''; $('#ketCount').textContent = '0/300'; $('#fPakta').checked = false;
+        toast('Permohonan terkirim. Menunggu persetujuan atasan.');
+        await refreshState(true);
+        if (window.innerWidth < 1024) $('#statusWrap').scrollIntoView({ behavior:'smooth', block:'start' });
+      } catch (ex) { if (!ex.code) toast(ex.message, 'error'); }
+    });
+    $('#btnSubmit').disabled = !$('#fPakta').checked;
+  });
+
+  /* ===================== RENDER PEGAWAI ===================== */
+  function stepper(status) {
+    const done = { MENUNGGU:1, DISETUJUI:2, BERLANGSUNG:3, SELESAI:4 }[status] || 1;
+    const steps = ['Diajukan', 'Disetujui', 'Clock In', 'Clock Out'];
+    return `<ol class="flex items-start">${steps.map((s, i) => {
+      const isDone = i < done, isCur = i === done;
+      const dot = isDone ? 'bg-navy-800 text-white dark:bg-gold dark:text-navy-900'
+                : isCur ? 'bg-gold/25 text-gold-dark ring-2 ring-gold' : 'bg-surface2 text-muted ring-1 ring-line';
+      const bar = i < steps.length - 1 ? `<div class="flex-1 h-0.5 mt-[0.9rem] ${i < done - 1 ? 'bg-navy-800 dark:bg-gold' : 'bg-line'}"></div>` : '';
+      return `<li class="flex items-start ${i < steps.length - 1 ? 'flex-1' : ''}">
+        <div class="flex flex-col items-center w-14 shrink-0">
+          <span class="step-dot ${dot}">${isDone ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>
+          <span class="text-[0.65rem] font-semibold mt-1 text-center ${isDone || isCur ? '' : 'text-muted'}">${s}</span>
+        </div>${bar}</li>`;
+    }).join('')}</ol>`;
+  }
+
+  function activeCard(r) {
+    const st = STATUS[r.status];
+    let timerBlock = '', actions = '';
+    if (r.status === 'MENUNGGU') {
+      timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold text-muted/60">00:00:00</div>
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-lock mr-1"></i> Tombol Clock In terkunci sampai ${esc(r.namaAtasan)} menyetujui.</p>`;
+      actions = `<button class="btn btn-primary w-full" disabled><i class="fa-solid fa-lock"></i> Mulai Izin (Clock In)</button>
+        <button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan Permohonan</button>`;
+    } else if (r.status === 'DISETUJUI') {
+      timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold">00:00:00</div>
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>
+          Disetujui oleh <b>${esc(r.diputuskanOleh)}</b> pukul ${fmtHM(r.diputuskan)}. Tekan Clock In saat berangkat.</p>`;
+      actions = `<button class="btn btn-gold w-full text-base py-3.5" data-action="clockIn" data-id="${esc(r.id)}"><i class="fa-solid fa-play"></i> Mulai Izin (Clock In)</button>`;
+    } else if (r.status === 'BERLANGSUNG') {
+      timerBlock = `<div class="timer text-5xl sm:text-6xl font-bold text-navy-800 dark:text-gold" data-timer-start="${r.clockIn}">${fmtHMS(now() - r.clockIn)}</div>
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-door-open mr-1"></i> Keluar sejak pukul ${fmtHMS2(r.clockIn)} WITA</p>`;
+      actions = `<button class="btn btn-danger w-full text-base py-3.5" data-action="clockOut" data-id="${esc(r.id)}" data-start="${r.clockIn}"><i class="fa-solid fa-stop"></i> Selesai / Kembali (Clock Out)</button>`;
+    } else if (r.status === 'DITOLAK') {
+      timerBlock = `<div class="rounded-xl bg-red-500/10 border border-red-500/30 p-4 text-left">
+          <p class="text-sm font-bold text-red-600 dark:text-red-300 mb-1"><i class="fa-solid fa-comment-dots mr-1"></i> Catatan dari ${esc(r.diputuskanOleh)}</p>
+          <p class="text-sm">${esc(r.catatan)}</p></div>`;
+      actions = `<button class="btn btn-ghost w-full" data-action="dismiss" data-id="${esc(r.id)}"><i class="fa-solid fa-check"></i> Mengerti, tutup</button>`;
+    }
+    return `<article class="card overflow-hidden mb-4">
+      <div class="h-1.5 ${r.status === 'BERLANGSUNG' ? 'bg-gold' : r.status === 'DITOLAK' ? 'bg-red-500' : 'bg-navy-800'}"></div>
+      <div class="p-5">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0"><p class="text-xs text-muted font-mono">${esc(r.id)}</p>
+            <p class="font-extrabold text-lg leading-tight truncate">${esc(r.keperluan)}</p></div>
+          <span class="badge ${st.cls}"><i class="fa-solid ${st.icon}"></i>${st.label}</span>
+        </div>
+        <p class="text-sm text-muted mt-2">${esc(r.keterangan)}</p>
+        <div class="mt-5">${r.status !== 'DITOLAK' ? stepper(r.status) : ''}</div>
+        <dl class="grid grid-cols-2 gap-3 mt-4 text-sm">
+          <div><dt class="text-xs text-muted">Atasan</dt><dd class="font-semibold truncate">${esc(r.namaAtasan)}</dd></div>
+          <div><dt class="text-xs text-muted">Diajukan</dt><dd class="font-semibold">${fmtDateShort(r.dibuat)}, ${fmtHM(r.dibuat)}</dd></div>
+        </dl>
+      </div>
+      <div class="pass-perf"></div>
+      <div class="p-5 text-center">${timerBlock}<div class="mt-5 grid gap-2">${actions}</div></div>
+    </article>`;
+  }
+
+  function renderPegawai() {
+    const s = STATE, me = s.me;
+    $('#userChip').innerHTML = `
+      <span class="w-8 h-8 shrink-0 rounded-lg bg-gold text-navy-900 grid place-items-center font-extrabold text-xs">${esc(initials(me.nama))}</span>
+      <span class="min-w-0"><span class="font-bold block truncate">${esc(me.nama)}</span>
+      <span class="text-xs text-slate-300 truncate block">${esc(me.peran)} · ${esc(me.seksi)}</span></span>`;
+
+    $('#profileCard').innerHTML = [
+      ['Nama pegawai', me.nama], ['NIP', me.nip], ['Seksi / Subbagian', me.seksi],
+      ['Atasan langsung', me.atasan ? me.atasan.nama : '— belum terdaftar —']
+    ].map(([k, v]) => `<div><p class="text-xs text-muted">${k}</p><p class="font-semibold ${k === 'NIP' ? 'font-mono' : ''}">${esc(v)}</p></div>`).join('');
+
+    const active = s.mine.filter(r => ACTIVE.includes(r.status) || (r.status === 'DITOLAK' && !r.ack));
+    const hasActive = s.mine.some(r => ACTIVE.includes(r.status));
+    const notice = $('#formNotice');
+    let msg = '';
+    if (!me.atasan) msg = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Atasan langsung Anda belum terdaftar. Hubungi Subbagian Umum dan KI agar data diperbarui.';
+    else if (hasActive) msg = '<i class="fa-solid fa-circle-info mr-1"></i> Anda masih punya izin yang aktif. Selesaikan dulu (Clock Out atau batalkan) sebelum mengajukan izin baru.';
+    notice.innerHTML = msg;
+    notice.className = msg ? `mt-4 rounded-xl p-4 text-sm font-semibold ${!me.atasan ? 'bg-red-500/10 text-red-700 dark:text-red-300' : 'bg-djp/10 text-djp dark:text-blue-300'}` : 'hidden';
+    $('#formFields').disabled = !!msg;
+    if (!msg) $('#btnSubmit').disabled = !$('#fPakta').checked;
+
+    $('#statusPanel').innerHTML = active.length ? active.map(activeCard).join('') : `
+      <div class="card p-6 text-center">
+        <div class="w-14 h-14 mx-auto rounded-2xl bg-surface2 grid place-items-center mb-3"><i class="fa-solid fa-mug-hot text-xl text-muted"></i></div>
+        <p class="font-bold">Tidak ada izin yang sedang berjalan</p>
+        <p class="text-sm text-muted mt-1">Isi formulir permohonan untuk mengajukan izin keluar.</p>
+      </div>`;
+
+    const hist = s.mine.filter(r => !active.includes(r)).slice(0, 6);
+    $('#myHistory').innerHTML = hist.length ? hist.map(r => {
+      const st = STATUS[r.status];
+      return `<div class="flex items-center gap-3 rounded-xl bg-surface2 px-3 py-2.5">
+        <i class="fa-solid ${st.icon} w-5 text-center text-muted"></i>
+        <div class="min-w-0 flex-1">
+          <p class="text-sm font-semibold truncate">${esc(r.keperluan)} <span class="text-muted font-normal">· ${fmtDateShort(r.dibuat)}</span></p>
+          <p class="text-xs text-muted">${r.status === 'SELESAI' ? `${fmtHM(r.clockIn)}–${fmtHM(r.clockOut)} · ${fmtDur(r.durasiDetik)}` : r.status === 'DITOLAK' ? esc(r.catatan) : st.label}</p>
+        </div>
+        <span class="badge ${st.cls}">${st.label}</span>
+      </div>`;
+    }).join('') : '<p class="text-sm text-muted">Belum ada riwayat izin.</p>';
+  }
+
+  /* ===================== RENDER ATASAN ===================== */
+  function renderAtasan() {
+    const s = STATE;
+    if (!s.me.isAtasan) return;
+    const admin = s.me.isAdmin;
+    $('#atasanScope').textContent = admin
+      ? 'Mode Admin: memantau seluruh pegawai kantor. Approval hanya untuk bawahan langsung Anda.'
+      : `Menampilkan ${s.me.jumlahBawahan} bawahan langsung Anda.`;
+    $('#adminCard').classList.toggle('hidden', !admin);
+
+    const stat = (label, val, icon, tone) => `
+      <div class="card p-4 sm:p-5">
+        <div class="flex items-center justify-between"><p class="text-xs sm:text-sm font-semibold text-muted">${label}</p><i class="fa-solid ${icon} ${tone}"></i></div>
+        <p class="text-3xl sm:text-4xl font-extrabold mt-2 tracking-tight">${val}</p>
+      </div>`;
+    $('#statsGrid').innerHTML =
+      stat('Menunggu approval Anda', s.queue.length, 'fa-hourglass-half', 'text-amber-500') +
+      stat('Sedang di luar', s.live.length, 'fa-person-walking-arrow-right', 'text-gold') +
+      stat('Disetujui, belum keluar', s.approved.length, 'fa-circle-check', 'text-djp-light') +
+      stat('Selesai hari ini', s.selesaiHariIni, 'fa-flag-checkered', 'text-emerald-500');
+
+    const b = $('#tabBadge'); b.textContent = s.queue.length; b.classList.toggle('hidden', !s.queue.length);
+
+    $('#queueCount').textContent = `${s.queue.length} menunggu`;
+    $('#queueList').innerHTML = s.queue.length ? s.queue.map(r => `
+      <article class="rounded-xl border border-line bg-surface2/60 p-4">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 shrink-0 rounded-xl bg-navy-800 text-white grid place-items-center font-bold text-sm">${esc(initials(r.nama))}</div>
+          <div class="min-w-0 flex-1">
+            <div class="flex flex-wrap items-center gap-x-2"><p class="font-bold truncate">${esc(r.nama)}</p><span class="text-xs text-muted font-mono">${esc(r.nip)}</span></div>
+            <p class="text-xs text-muted">${esc(r.seksi)} · diajukan ${fmtHM(r.dibuat)}, ${fmtDateShort(r.dibuat)}</p>
+            <p class="text-sm mt-2"><span class="badge badge-ok mr-1">${esc(r.keperluan)}</span> ${esc(r.keterangan)}</p>
+            <p class="text-xs mt-2 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pakta integritas disetujui</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2 mt-4">
+          <button class="btn btn-ghost btn-sm text-red-600 dark:text-red-400" data-action="reject" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-kep="${esc(r.keperluan)}"><i class="fa-solid fa-xmark"></i> Reject</button>
+          <button class="btn btn-success btn-sm" data-action="approve" data-id="${esc(r.id)}"><i class="fa-solid fa-check"></i> Approve</button>
+        </div>
+      </article>`).join('') : `
+      <div class="text-center py-8"><i class="fa-solid fa-inbox text-3xl text-muted/50"></i>
+        <p class="font-semibold mt-2">Tidak ada permohonan yang menunggu</p>
+        <p class="text-sm text-muted">Permohonan baru dari bawahan Anda akan muncul di sini.</p></div>`;
+
+    const others = s.queueOthers || [];
+    $('#othersWrap').classList.toggle('hidden', !others.length);
+    $('#othersList').innerHTML = others.map(r => `
+      <div class="flex items-center justify-between gap-3 text-sm rounded-lg bg-surface2 px-3 py-2">
+        <span class="truncate"><b>${esc(r.nama)}</b> <span class="text-muted">· ${esc(r.keperluan)}</span></span>
+        <span class="text-xs text-muted shrink-0">ke ${esc(r.namaAtasan)}</span>
+      </div>`).join('');
+
+    $('#liveCount').textContent = `${s.live.length} pegawai`;
+    $('#liveList').innerHTML = s.live.length ? s.live.map(r => {
+      const long = now() - r.clockIn > LONG_OUT_MS;
+      return `<div class="rounded-xl border ${long ? 'border-red-500/50 bg-red-500/5' : 'border-gold/40 bg-gold/5'} p-4 flex items-center gap-3" data-long-start="${r.clockIn}">
+        <div class="w-10 h-10 shrink-0 rounded-xl bg-gold text-navy-900 grid place-items-center font-extrabold text-sm">${esc(initials(r.nama))}</div>
+        <div class="min-w-0 flex-1">
+          <p class="font-bold truncate">${esc(r.nama)}</p>
+          <p class="text-xs text-muted truncate">${esc(r.seksi)}</p>
+          <p class="text-xs mt-1"><span class="font-semibold">${esc(r.keperluan)}</span> <span class="text-muted">· keluar ${fmtHM(r.clockIn)}</span></p>
+        </div>
+        <div class="text-right">
+          <div class="timer text-xl sm:text-2xl font-bold ${long ? 'text-red-600 dark:text-red-400' : ''}" data-timer-start="${r.clockIn}">${fmtHMS(now() - r.clockIn)}</div>
+          ${long ? '<p class="text-[0.68rem] font-bold text-red-600 dark:text-red-400">Lebih dari 2 jam</p>' : ''}
+        </div>
+      </div>`;
+    }).join('') : `
+      <div class="text-center py-8"><i class="fa-solid fa-building-circle-check text-3xl text-muted/50"></i>
+        <p class="font-semibold mt-2">Semua pegawai berada di kantor</p>
+        <p class="text-sm text-muted">Pegawai yang menekan Clock In akan tampil di sini.</p></div>`;
+
+    $('#approvedWaitWrap').classList.toggle('hidden', !s.approved.length);
+    $('#approvedWaitList').innerHTML = s.approved.map(r => `
+      <div class="flex items-center justify-between gap-3 text-sm rounded-lg bg-surface2 px-3 py-2">
+        <span class="truncate"><b>${esc(r.nama)}</b> <span class="text-muted">· ${esc(r.keperluan)}</span></span>
+        <span class="text-xs text-muted shrink-0">disetujui ${fmtHM(r.diputuskan)}</span>
+      </div>`).join('');
+
+    const sel = $('#rSeksi'), cur = sel.value;
+    sel.innerHTML = '<option value="">Semua seksi/subbagian</option>' +
+      (s.seksiList || []).map(x => `<option ${x === cur ? 'selected' : ''}>${esc(x)}</option>`).join('');
+  }
+
+  function renderAll() {
+    if (!STATE) return;
+    renderPegawai();
+    renderAtasan();
+    if (!STATE.me.isAtasan && TAB === 'atasan') showTab('pegawai');
+  }
+
+  /* ===================== AKSI ===================== */
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('[data-action]');
+    if (!btn) return;
+    const id = btn.dataset.id, act = btn.dataset.action;
+    const run = async (action, payload, okMsg, type) => {
+      try { await call(action, Object.assign({ id }, payload || {})); if (okMsg) toast(okMsg, type); await refreshState(true); }
+      catch (ex) { if (!ex.code) toast(ex.message, 'error'); await refreshState(true); }
+    };
+
+    if (act === 'approve') withBusy(btn, () => run('approve', null, 'Izin disetujui. Pegawai sudah bisa Clock In.'));
+    else if (act === 'clockIn') withBusy(btn, () => run('clockIn', null, 'Clock In tercatat. Hati-hati di jalan.'));
+    else if (act === 'dismiss') withBusy(btn, () => run('dismiss'));
+    else if (act === 'reject') openModal({
+      title: 'Tolak permohonan izin',
+      body: `<p class="text-muted mb-3">Permohonan <b class="text-ink">${esc(btn.dataset.nama)}</b> untuk <b class="text-ink">${esc(btn.dataset.kep)}</b>.</p>
+             <label class="label" for="rejNote">Alasan penolakan (wajib)</label>
+             <textarea id="rejNote" class="field min-h-[96px]" maxlength="250" placeholder="Contoh: Pelayanan WP sedang padat, mohon ditunda setelah pukul 14.00."></textarea>`,
+      okText: '<i class="fa-solid fa-xmark"></i> Tolak permohonan', okClass: 'btn-danger',
+      onOk: async () => {
+        const note = $('#rejNote').value.trim();
+        if (note.length < 5) { toast('Tulis alasan penolakan (minimal 5 karakter).', 'warn'); $('#rejNote').focus(); return false; }
+        await run('reject', { catatan: note }, 'Permohonan ditolak. Pegawai akan melihat catatan Anda.', 'info');
+      }
+    });
+    else if (act === 'cancel') openModal({
+      title: 'Batalkan permohonan?',
+      body: '<p class="text-muted">Permohonan akan dibatalkan dan hilang dari antrean atasan.</p>',
+      okText: 'Batalkan permohonan', okClass: 'btn-danger',
+      onOk: () => run('cancel', null, 'Permohonan dibatalkan.', 'info')
+    });
+    else if (act === 'clockOut') {
+      const start = Number(btn.dataset.start);
+      openModal({
+        title: 'Selesai dan kembali ke kantor?',
+        body: `<p class="text-muted">Durasi keluar sejauh ini:</p>
+               <p class="timer text-3xl font-bold mt-1" data-timer-start="${start}">${fmtHMS(now() - start)}</p>
+               <p class="text-muted mt-2">Jam kembali dicatat oleh server saat tombol di bawah ditekan.</p>`,
+        okText: '<i class="fa-solid fa-stop"></i> Clock Out sekarang', okClass: 'btn-danger',
+        onOk: async () => {
+          try {
+            const r = await call('clockOut', { id });
+            toast(`Selamat datang kembali. Total durasi keluar: ${fmtDur(r.durasiDetik)}.`);
+          } catch (ex) { if (!ex.code) toast(ex.message, 'error'); }
+          await refreshState(true);
+        }
+      });
+    }
+  });
+
+  $('#formReset').addEventListener('submit', e => {
+    e.preventDefault();
+    const nip = $('#resetNip').value.replace(/\s/g, '');
+    if (!/^\d{18}$/.test(nip)) return toast('NIP harus 18 digit angka.', 'warn');
+    openModal({
+      title: 'Reset PIN pegawai?',
+      body: `<p class="text-muted">PIN lama untuk NIP <b class="text-ink font-mono">${esc(nip)}</b> tidak bisa dipakai lagi.</p>`,
+      okText: '<i class="fa-solid fa-rotate"></i> Reset PIN',
+      onOk: async () => {
+        try {
+          const r = await call('resetPin', { nip });
+          $('#resetNip').value = '';
+          setTimeout(() => openModal({
+            title: 'PIN awal baru',
+            body: `<p class="text-muted">Sampaikan langsung kepada <b class="text-ink">${esc(r.nama)}</b>, jangan lewat grup.</p>
+                   <p class="timer text-4xl font-bold text-center tracking-[0.3em] my-4">${esc(r.pin)}</p>
+                   <p class="text-xs text-muted">Pegawai wajib membuat PIN pribadi saat login berikutnya.</p>`,
+            okText: 'Selesai', hideCancel: true
+          }), 50);
+        } catch (ex) { if (!ex.code) toast(ex.message, 'error'); return false; }
+      }
+    });
+  });
+
+  /* ===================== REKAP & EXCEL ===================== */
+  function setRange(kind) {
+    const t = ymd(now());
+    const [y, m, d] = t.split('-').map(Number);
+    let start = t;
+    if (kind === '7') { const dt = new Date(Date.UTC(y, m - 1, d - 6)); start = dt.toISOString().slice(0, 10); }
+    else if (kind === 'month') start = `${y}-${pad(m)}-01`;
+    else if (kind === 'year') start = `${y}-01-01`;
+    $('#rStart').value = start; $('#rEnd').value = t;
+  }
+  function getFilter(silent) {
+    const start = $('#rStart').value, end = $('#rEnd').value;
+    if (!start || !end) { if (!silent) toast('Isi tanggal mulai dan tanggal selesai.', 'warn'); return null; }
+    if (start > end) { if (!silent) toast('Tanggal mulai tidak boleh setelah tanggal selesai.', 'warn'); return null; }
+    return { start, end, seksi: $('#rSeksi').value, status: $('#rStatus').value };
+  }
+  async function loadRekap() {
+    const f = getFilter(true);
+    const body = $('#rekapBody');
+    if (!f) { body.innerHTML = '<tr><td colspan="10" class="text-center text-muted py-8">Atur rentang tanggal yang valid.</td></tr>'; $('#rekapSummary').innerHTML = ''; return null; }
+    body.innerHTML = '<tr><td colspan="10" class="text-center text-muted py-8"><i class="fa-solid fa-circle-notch spin mr-1"></i> Memuat data…</td></tr>';
+    try { REKAP = await call('rekap', f); }
+    catch (ex) { body.innerHTML = `<tr><td colspan="10" class="text-center text-red-600 py-8">${esc(ex.message)}</td></tr>`; return null; }
+    const selesai = REKAP.filter(r => r.status === 'SELESAI');
+    const total = selesai.reduce((a, r) => a + (r.durasiDetik || 0), 0);
+    $('#rekapSummary').innerHTML = `
+      <span><span class="text-muted">Jumlah data:</span> <b>${REKAP.length}</b></span>
+      <span><span class="text-muted">Izin selesai:</span> <b>${selesai.length}</b></span>
+      <span><span class="text-muted">Total durasi keluar:</span> <b>${selesai.length ? fmtDur(total) : '-'}</b></span>
+      <span><span class="text-muted">Rata-rata:</span> <b>${selesai.length ? fmtDur(total / selesai.length) : '-'}</b></span>`;
+    body.innerHTML = REKAP.length ? REKAP.map((r, i) => {
+      const st = STATUS[r.status] || STATUS.MENUNGGU;
+      return `<tr>
+        <td class="text-muted">${i + 1}</td><td class="whitespace-nowrap">${esc(r.tanggal)}</td>
+        <td><p class="font-semibold">${esc(r.nama)}</p><p class="text-xs text-muted font-mono">${esc(r.nip)}</p></td>
+        <td class="min-w-[180px]">${esc(r.seksi)}</td>
+        <td><p class="font-semibold whitespace-nowrap">${esc(r.keperluan)}</p><p class="text-xs text-muted max-w-[220px]">${esc(r.keterangan)}</p></td>
+        <td class="whitespace-nowrap">${esc(r.atasan)}</td>
+        <td class="font-mono whitespace-nowrap">${esc(r.jamIn)}</td><td class="font-mono whitespace-nowrap">${esc(r.jamOut)}</td>
+        <td class="whitespace-nowrap font-semibold">${esc(r.durasi)}</td><td><span class="badge ${st.cls}">${st.label}</span></td>
+      </tr>`;
+    }).join('') : `<tr><td colspan="10" class="text-center py-10"><i class="fa-regular fa-folder-open text-2xl text-muted/60"></i>
+        <p class="font-semibold mt-2">Tidak ada data pada filter ini</p><p class="text-sm text-muted">Ubah rentang tanggal, seksi, atau status.</p></td></tr>`;
+    return f;
+  }
+  $$('[data-range]').forEach(b => b.addEventListener('click', () => { setRange(b.dataset.range); loadRekap(); }));
+  ['#rStart', '#rEnd', '#rSeksi', '#rStatus'].forEach(s => $(s).addEventListener('change', loadRekap));
+
+  $('#btnDownload').addEventListener('click', () => withBusy($('#btnDownload'), async () => {
+    if (typeof XLSX === 'undefined') return toast('Library Excel (SheetJS) belum termuat. Periksa koneksi lalu muat ulang halaman.', 'error');
+    if (!getFilter()) return;
+    const f = await loadRekap(); // ambil data terbaru dari server
+    if (!f) return;
+    if (!REKAP.length) return toast('Tidak ada data pada periode/filter yang dipilih.', 'warn');
+
+    const header = ['No', 'Tanggal', 'Nama Pegawai', 'NIP', 'Seksi', 'Keperluan', 'Detail Keterangan', 'Nama Atasan Approval',
+                    'Jam Clock In', 'Jam Clock Out', 'Total Durasi Keluar', 'Status Pakta Integritas', 'Status Akhir'];
+    const rows = REKAP.map((r, i) => [i + 1, r.tanggal, r.nama, String(r.nip), r.seksi, r.keperluan, r.keterangan,
+                                      r.atasan, r.jamIn, r.jamOut, r.durasi, r.pakta, r.statusAkhir]);
+    const periode = `${fmtDateLong(f.start)} s.d. ${fmtDateLong(f.end)}`;
+    const statusLabel = f.status ? STATUS[f.status].label : 'Semua Status';
+    const aoa = [
+      ['REKAPITULASI IZIN KELUAR NON-DINAS PEGAWAI'],
+      ['KANTOR PELAYANAN PAJAK PRATAMA RABA BIMA'],
+      [`Periode: ${periode}`],
+      [`Seksi/Subbagian: ${f.seksi || 'Semua Seksi/Subbagian'}   |   Status: ${statusLabel}   |   Jumlah: ${REKAP.length} data`],
+      [`Diunduh oleh: ${STATE.me.nama} (${STATE.me.nip}) pada ${new Date(now()).toLocaleString('id-ID', { timeZone: TZ })} WITA`],
+      [], header, ...rows
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+    const lastCol = header.length - 1;
+    ws['!merges'] = [0, 1, 2, 3, 4].map(r => ({ s: { r, c: 0 }, e: { r, c: lastCol } }));
+    ws['!cols'] = [5, 12, 26, 21, 36, 17, 45, 26, 13, 13, 20, 30, 38].map(w => ({ wch: w }));
+    ws['!autofilter'] = { ref: `A7:${XLSX.utils.encode_col(lastCol)}${7 + rows.length}` };
+
+    const per = {};
+    REKAP.forEach(r => {
+      const p = per[r.seksi] = per[r.seksi] || { n: 0, selesai: 0, ditolak: 0, sec: 0 };
+      p.n++; if (r.status === 'DITOLAK') p.ditolak++;
+      if (r.status === 'SELESAI') { p.selesai++; p.sec += r.durasiDetik || 0; }
+    });
+    const aoa2 = [['RINGKASAN PER SEKSI/SUBBAGIAN'], [`Periode: ${periode}`], [],
+      ['No', 'Seksi/Subbagian', 'Jumlah Pengajuan', 'Izin Selesai', 'Ditolak', 'Total Durasi Keluar', 'Rata-rata Durasi']];
+    Object.keys(per).sort().forEach((k, i) => {
+      const p = per[k];
+      aoa2.push([i + 1, k, p.n, p.selesai, p.ditolak, p.selesai ? fmtDur(p.sec) : '-', p.selesai ? fmtDur(p.sec / p.selesai) : '-']);
+    });
+    const ws2 = XLSX.utils.aoa_to_sheet(aoa2);
+    ws2['!merges'] = [0, 1].map(r => ({ s: { r, c: 0 }, e: { r, c: 6 } }));
+    ws2['!cols'] = [5, 40, 17, 13, 10, 20, 18].map(w => ({ wch: w }));
+
+    const wb = XLSX.utils.book_new();
+    wb.Props = { Title: 'Rekap Izin Keluar Non-Dinas', Subject: 'KPP Pratama Raba Bima', Author: STATE.me.nama };
+    XLSX.utils.book_append_sheet(wb, ws, 'Rekap Izin Keluar');
+    XLSX.utils.book_append_sheet(wb, ws2, 'Ringkasan Seksi');
+    const fname = f.start === f.end ? `Rekap_Izin_Keluar_KPP_Raba_Bima_${f.start}.xlsx`
+                                    : `Rekap_Izin_Keluar_KPP_Raba_Bima_${f.start}_sd_${f.end}.xlsx`;
+    try { XLSX.writeFile(wb, fname); toast(`File ${fname} diunduh (${REKAP.length} data).`); }
+    catch (err) { console.error(err); toast('Gagal mengunduh file. Coba buka aplikasi di Chrome terbaru.', 'error'); }
+  }));
+
+  /* ===================== TICK (jam & timer) ===================== */
+  function tick() {
+    if ($('#scrApp').classList.contains('hidden')) return;
+    const t = now(), p = parts(t);
+    $('#hdrTime').textContent = `${p.hour}.${p.minute}.${p.second}`;
+    $('#hdrDate').textContent = new Date(t).toLocaleDateString('id-ID', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ' · WITA';
+    $$('[data-timer-start]').forEach(el => { el.textContent = fmtHMS(t - Number(el.dataset.timerStart)); });
+  }
+  setInterval(tick, 1000);
+
+  /* ===================== BOOT ===================== */
+  setRange('month');
+  (async function boot() {
+    if (!/^https:\/\/script\.google\.com\/macros\/s\/.+\/exec$/.test(API_URL)) {
+      $('#loadingMsg').innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Alamat server (API_URL) belum diisi dengan benar.';
+      return;
+    }
+    if (!TOKEN) return showLogin();
+    await enterApp();
+  })();
+})();
+</script>
+</body>
+</html>
