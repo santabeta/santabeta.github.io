@@ -645,7 +645,7 @@
       try {
         await call('submit', { keperluan: kep.value, keterangan: ket, pakta: true });
         kep.checked = false; $('#fKet').value = ''; $('#ketCount').textContent = '0/300'; $('#fPakta').checked = false;
-        toast('Permohonan terkirim. Menunggu persetujuan atasan.');
+        toast('Permohonan terkirim. Sampaikan langsung kepada atasan Anda untuk menyetujui.');
         await refreshState(true);
         if (window.innerWidth < 1024) $('#statusWrap').scrollIntoView({ behavior:'smooth', block:'start' });
       } catch (ex) { if (!ex.code) toast(ex.message, 'error'); }
@@ -675,7 +675,11 @@
     let timerBlock = '', actions = '';
     if (r.status === 'MENUNGGU') {
       timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold text-muted/60">00:00:00</div>
-        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-hourglass-half mr-1"></i> Timer otomatis berjalan begitu ${esc(r.namaAtasan)} menyetujui. Bersiaplah berangkat.</p>`;
+        <div class="mt-3 rounded-xl bg-gold/10 border border-gold/40 p-3 text-left text-sm">
+          <p class="font-bold"><i class="fa-solid fa-bullhorn mr-1 text-gold-dark"></i> Sampaikan langsung kepada ${esc(r.namaAtasan)}</p>
+          <p class="text-muted mt-1">Beri tahu atasan Anda bahwa Anda mengajukan izin agar segera disetujui. Bila atasan sedang cuti atau berhalangan, minta persetujuan kepada petugas atau Kepala Subbagian UKI.</p>
+        </div>
+        <p class="text-xs text-muted mt-2"><i class="fa-solid fa-hourglass-half mr-1"></i> Timer berjalan otomatis begitu izin disetujui.</p>`;
       actions = `<button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan Permohonan</button>`;
     } else if (r.status === 'DISETUJUI') {
       timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold">00:00:00</div>
@@ -684,7 +688,8 @@
       actions = `<button class="btn btn-gold w-full text-base py-3.5" data-action="clockIn" data-id="${esc(r.id)}"><i class="fa-solid fa-play"></i> Mulai Izin (Clock In)</button>`;
     } else if (r.status === 'BERLANGSUNG') {
       timerBlock = `<div class="timer text-5xl sm:text-6xl font-bold text-navy-800 dark:text-gold" data-timer-start="${r.clockIn}">${fmtHMS(now() - r.clockIn)}</div>
-        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Disetujui ${esc(r.diputuskanOleh)} · Clock In otomatis pukul ${fmtHMS2(r.clockIn)} WITA</p>`;
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Disetujui ${esc(r.diputuskanOleh)} · Clock In pukul ${fmtHMS2(r.clockIn)} WITA</p>
+        ${r.catatan ? `<p class="text-xs mt-1 text-gold-dark dark:text-gold"><i class="fa-solid fa-clock-rotate-left mr-1"></i>${esc(r.catatan)}</p>` : ''}`;
       actions = `<button class="btn btn-danger w-full text-base py-3.5" data-action="clockOut" data-id="${esc(r.id)}" data-start="${r.clockIn}"><i class="fa-solid fa-stop"></i> Selesai / Kembali (Clock Out)</button>`;
     } else if (r.status === 'DITOLAK') {
       timerBlock = `<div class="rounded-xl bg-red-500/10 border border-red-500/30 p-4 text-left">
@@ -760,11 +765,13 @@
   function renderAtasan() {
     const s = STATE;
     if (!s.me.isAtasan) return;
-    const admin = s.me.isAdmin;
-    $('#atasanScope').textContent = admin
-      ? 'Mode Admin: memantau dan dapat menyetujui permohonan seluruh pegawai, termasuk saat atasan langsung berhalangan.'
-      : `Menampilkan ${s.me.jumlahBawahan} bawahan langsung Anda.`;
-    $('#adminCard').classList.toggle('hidden', !admin);
+    const admin = s.me.canAll;
+    $('#atasanScope').textContent = s.me.isAdmin
+      ? 'Mode Admin: memantau, menyetujui, dan mengisi jam Clock In berlaku surut untuk seluruh pegawai, termasuk saat atasan langsung berhalangan.'
+      : s.me.isUKI
+        ? 'Subbagian UKI: dapat menyetujui dan mengisi jam Clock In berlaku surut untuk seluruh pegawai bila atasan langsung berhalangan.'
+        : `Menampilkan ${s.me.jumlahBawahan} bawahan langsung Anda.`;
+    $('#adminCard').classList.toggle('hidden', !s.me.isAdmin);
 
     const stat = (label, val, icon, tone) => `
       <div class="card p-4 sm:p-5">
@@ -789,18 +796,18 @@
             <p class="text-xs text-muted">${esc(r.seksi)} · diajukan ${fmtHM(r.dibuat)}, ${fmtDateShort(r.dibuat)}</p>
             <p class="text-sm mt-2"><span class="badge badge-ok mr-1">${esc(r.keperluan)}</span> ${esc(r.keterangan)}</p>
             <p class="text-xs mt-2 text-muted"><i class="fa-solid fa-user-tie mr-1"></i>Atasan langsung: <b class="text-ink">${esc(r.namaAtasan)}</b>
-              ${r.nipAtasan !== s.me.nip ? '<span class="badge badge-wait ml-1">Anda mewakili sebagai Admin</span>' : ''}</p>
+              ${r.nipAtasan !== s.me.nip ? `<span class="badge badge-wait ml-1">Anda mewakili sebagai ${s.me.isAdmin ? 'Admin' : 'petugas UKI'}</span>` : ''}</p>
             <p class="text-xs mt-1 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pernyataan disetujui</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-4">
           <button class="btn btn-ghost btn-sm text-red-600 dark:text-red-400" data-action="reject" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-kep="${esc(r.keperluan)}"><i class="fa-solid fa-xmark"></i> Reject</button>
-          <button class="btn btn-success btn-sm" data-action="approve" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-atasan="${esc(r.namaAtasan)}" data-wakil="${r.nipAtasan !== s.me.nip ? '1' : ''}"><i class="fa-solid fa-check"></i> Approve &amp; Clock In</button>
+          <button class="btn btn-success btn-sm" data-action="approve" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-kep="${esc(r.keperluan)}" data-atasan="${esc(r.namaAtasan)}" data-wakil="${r.nipAtasan !== s.me.nip ? '1' : ''}"><i class="fa-solid fa-check"></i> Approve &amp; Clock In</button>
         </div>
       </article>`).join('') : `
       <div class="text-center py-8"><i class="fa-solid fa-inbox text-3xl text-muted/50"></i>
         <p class="font-semibold mt-2">Tidak ada permohonan yang menunggu</p>
-        <p class="text-sm text-muted">${s.me.isAdmin ? 'Permohonan baru dari seluruh pegawai akan muncul di sini.' : 'Permohonan baru dari bawahan Anda akan muncul di sini.'}</p></div>`;
+        <p class="text-sm text-muted">${s.me.canAll ? 'Permohonan baru dari seluruh pegawai akan muncul di sini.' : 'Permohonan baru dari bawahan Anda akan muncul di sini.'}</p></div>`;
 
     const others = s.queueOthers || [];
     $('#othersWrap').classList.toggle('hidden', !others.length);
@@ -823,6 +830,7 @@
         <div class="text-right">
           <div class="timer text-xl sm:text-2xl font-bold ${long ? 'text-red-600 dark:text-red-400' : ''}" data-timer-start="${r.clockIn}">${fmtHMS(now() - r.clockIn)}</div>
           ${long ? '<p class="text-[0.68rem] font-bold text-red-600 dark:text-red-400">Lebih dari 2 jam</p>' : ''}
+          ${r.nip !== s.me.nip && (s.me.canAll || r.nipAtasan === s.me.nip) ? `<button class="mt-1 text-[0.72rem] font-bold text-djp dark:text-blue-300 hover:underline" data-action="setClockIn" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-start="${r.clockIn}"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Ubah jam Clock In</button>` : ''}
         </div>
       </div>`;
     }).join('') : `
@@ -849,6 +857,40 @@
     if (!STATE.me.isAtasan && TAB === 'atasan') showTab('pegawai');
   }
 
+  /* ===================== JAM CLOCK IN BERLAKU SURUT ===================== */
+  const hhmm = ms => { const p = parts(ms); return `${p.hour}:${p.minute}`; };
+  function clockInChooser(withNowOption, current) {
+    const maxJam = (STATE && STATE.me.backdateMaxJam) || 24;
+    const note = '<p class="text-xs text-muted mt-3"><i class="fa-solid fa-circle-info mr-1"></i>Jam Clock In berlaku surut diisi oleh atasan atau Kepala Subbagian Umum dan Kepatuhan Internal. Tercatat di riwayat dan rekap.</p>';
+    const timeField = `<div id="ciPastWrap" class="${withNowOption ? 'hidden ' : ''}mt-3">
+        <label class="label" for="ciTime">Jam Clock In (WITA, hari ini)</label>
+        <input id="ciTime" type="time" class="field" value="${current ? hhmm(current) : hhmm(now())}">
+        <p class="text-xs text-muted mt-1">Tidak boleh melewati jam sekarang, paling lama ${maxJam} jam ke belakang.</p></div>`;
+    if (!withNowOption) return timeField + note;
+    return `<div class="mt-4 space-y-2">
+        <label class="flex items-start gap-3 rounded-xl border border-line p-3 cursor-pointer">
+          <input type="radio" name="ciMode" value="now" checked class="mt-1 accent-[#0b2e59]">
+          <span><b>Clock In sekarang</b><span class="block text-xs text-muted">Timer mulai saat Anda menekan Approve.</span></span></label>
+        <label class="flex items-start gap-3 rounded-xl border border-line p-3 cursor-pointer">
+          <input type="radio" name="ciMode" value="past" class="mt-1 accent-[#0b2e59]">
+          <span><b>Berlaku surut</b><span class="block text-xs text-muted">Isi jam pegawai benar-benar berangkat.</span></span></label>
+      </div>${timeField}${note}`;
+  }
+  document.addEventListener('change', e => {
+    if (e.target && e.target.name === 'ciMode') $('#ciPastWrap').classList.toggle('hidden', e.target.value !== 'past');
+  });
+  // null = jam sekarang; angka = jam berlaku surut; false = isian tidak valid
+  function readClockIn() {
+    const mode = $('input[name="ciMode"]:checked');
+    if (mode && mode.value === 'now') return null;
+    const v = ($('#ciTime') || {}).value;
+    if (!v) { toast('Isi jam Clock In.', 'warn'); return false; }
+    const ms = new Date(`${ymd(now())}T${v}:00+08:00`).getTime();
+    if (isNaN(ms)) { toast('Jam Clock In tidak valid.', 'warn'); return false; }
+    if (ms > now() + 60000) { toast('Jam Clock In tidak boleh melewati jam sekarang.', 'warn'); return false; }
+    return ms;
+  }
+
   /* ===================== AKSI ===================== */
   document.addEventListener('click', e => {
     const btn = e.target.closest('[data-action]');
@@ -859,14 +901,33 @@
       catch (ex) { if (!ex.code) toast(ex.message, 'error'); await refreshState(true); }
     };
 
-    if (act === 'approve' && btn.dataset.wakil === '1') openModal({
-      title: 'Setujui sebagai Admin?',
-      body: `<p class="text-muted">Anda akan menyetujui izin <b class="text-ink">${esc(btn.dataset.nama)}</b> mewakili atasan langsungnya, <b class="text-ink">${esc(btn.dataset.atasan)}</b>.</p>
-             <p class="text-muted mt-2">Clock In langsung tercatat, dan nama Anda tercatat sebagai pemberi persetujuan dengan keterangan (Admin).</p>`,
-      okText: '<i class="fa-solid fa-check"></i> Approve &amp; Clock In', okClass: 'btn-success',
-      onOk: () => run('approve', null, 'Izin disetujui. Clock In otomatis tercatat dan timer pegawai mulai berjalan.')
+    if (act === 'approve') {
+      const wakil = btn.dataset.wakil === '1';
+      const sebagai = STATE.me.isAdmin ? 'Admin' : 'UKI';
+      openModal({
+        title: wakil ? `Setujui sebagai ${sebagai}?` : 'Setujui izin?',
+        body: `<p class="text-muted">Izin <b class="text-ink">${esc(btn.dataset.nama)}</b> untuk <b class="text-ink">${esc(btn.dataset.kep || '')}</b>.</p>
+          ${wakil ? `<p class="text-muted mt-2">Anda menyetujui mewakili atasan langsungnya, <b class="text-ink">${esc(btn.dataset.atasan)}</b>. Nama Anda tercatat dengan keterangan (${sebagai}).</p>` : ''}
+          ${clockInChooser(true)}`,
+        okText: '<i class="fa-solid fa-check"></i> Approve &amp; Clock In', okClass: 'btn-success',
+        onOk: async () => {
+          const ci = readClockIn(); if (ci === false) return false;
+          await run('approve', ci === null ? null : { clockIn: ci },
+            ci === null ? 'Izin disetujui. Clock In otomatis tercatat dan timer pegawai mulai berjalan.'
+                        : 'Izin disetujui dengan jam Clock In berlaku surut.');
+        }
+      });
+    }
+    else if (act === 'setClockIn') openModal({
+      title: 'Ubah jam Clock In',
+      body: `<p class="text-muted">Izin <b class="text-ink">${esc(btn.dataset.nama)}</b>. Jam Clock In saat ini <b class="text-ink">${fmtHM(Number(btn.dataset.start))}</b> WITA.</p>
+             ${clockInChooser(false, Number(btn.dataset.start))}`,
+      okText: '<i class="fa-solid fa-clock-rotate-left"></i> Simpan jam Clock In',
+      onOk: async () => {
+        const ci = readClockIn(); if (ci === false) return false;
+        await run('setClockIn', { clockIn: ci }, 'Jam Clock In diperbarui. Durasi dihitung ulang.');
+      }
     });
-    else if (act === 'approve') withBusy(btn, () => run('approve', null, 'Izin disetujui. Clock In otomatis tercatat dan timer pegawai mulai berjalan.'));
     else if (act === 'clockIn') withBusy(btn, () => run('clockIn', null, 'Clock In tercatat. Hati-hati di jalan.'));
     else if (act === 'dismiss') withBusy(btn, () => run('dismiss'));
     else if (act === 'reject') openModal({
