@@ -1,0 +1,19 @@
+{
+  "name": "SANTABE TA – KPP Pratama Raba Bima",
+  "short_name": "SANTABE TA",
+  "description": "Sistem Aplikasi Non-Dinas & Transparansi Aktivitas Birokrasi: izin keluar non-dinas, approval atasan, log jam keluar-masuk, dan akuntabilitas pegawai.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "id",
+  "background_color": "#0b2e59",
+  "theme_color": "#0b2e59",
+  "categories": ["productivity", "business"],
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
