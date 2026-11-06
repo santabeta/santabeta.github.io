@@ -655,15 +655,15 @@
 
   /* ===================== RENDER PEGAWAI ===================== */
   function stepper(status) {
-    const done = { MENUNGGU:1, DISETUJUI:2, BERLANGSUNG:3, SELESAI:4 }[status] || 1;
-    const steps = ['Diajukan', 'Disetujui', 'Clock In', 'Clock Out'];
+    const done = { MENUNGGU:1, DISETUJUI:2, BERLANGSUNG:2, SELESAI:3 }[status] || 1;
+    const steps = ['Diajukan', 'Disetujui & Clock In', 'Clock Out'];
     return `<ol class="flex items-start">${steps.map((s, i) => {
       const isDone = i < done, isCur = i === done;
       const dot = isDone ? 'bg-navy-800 text-white dark:bg-gold dark:text-navy-900'
                 : isCur ? 'bg-gold/25 text-gold-dark ring-2 ring-gold' : 'bg-surface2 text-muted ring-1 ring-line';
       const bar = i < steps.length - 1 ? `<div class="flex-1 h-0.5 mt-[0.9rem] ${i < done - 1 ? 'bg-navy-800 dark:bg-gold' : 'bg-line'}"></div>` : '';
       return `<li class="flex items-start ${i < steps.length - 1 ? 'flex-1' : ''}">
-        <div class="flex flex-col items-center w-14 shrink-0">
+        <div class="flex flex-col items-center w-20 shrink-0">
           <span class="step-dot ${dot}">${isDone ? '<i class="fa-solid fa-check"></i>' : i + 1}</span>
           <span class="text-[0.65rem] font-semibold mt-1 text-center ${isDone || isCur ? '' : 'text-muted'}">${s}</span>
         </div>${bar}</li>`;
@@ -675,9 +675,8 @@
     let timerBlock = '', actions = '';
     if (r.status === 'MENUNGGU') {
       timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold text-muted/60">00:00:00</div>
-        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-lock mr-1"></i> Tombol Clock In terkunci sampai ${esc(r.namaAtasan)} menyetujui.</p>`;
-      actions = `<button class="btn btn-primary w-full" disabled><i class="fa-solid fa-lock"></i> Mulai Izin (Clock In)</button>
-        <button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan Permohonan</button>`;
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-hourglass-half mr-1"></i> Timer otomatis berjalan begitu ${esc(r.namaAtasan)} menyetujui. Bersiaplah berangkat.</p>`;
+      actions = `<button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan Permohonan</button>`;
     } else if (r.status === 'DISETUJUI') {
       timerBlock = `<div class="timer text-4xl sm:text-5xl font-bold">00:00:00</div>
         <p class="text-sm text-muted mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>
@@ -685,7 +684,7 @@
       actions = `<button class="btn btn-gold w-full text-base py-3.5" data-action="clockIn" data-id="${esc(r.id)}"><i class="fa-solid fa-play"></i> Mulai Izin (Clock In)</button>`;
     } else if (r.status === 'BERLANGSUNG') {
       timerBlock = `<div class="timer text-5xl sm:text-6xl font-bold text-navy-800 dark:text-gold" data-timer-start="${r.clockIn}">${fmtHMS(now() - r.clockIn)}</div>
-        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-door-open mr-1"></i> Keluar sejak pukul ${fmtHMS2(r.clockIn)} WITA</p>`;
+        <p class="text-sm text-muted mt-2"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Disetujui ${esc(r.diputuskanOleh)} · Clock In otomatis pukul ${fmtHMS2(r.clockIn)} WITA</p>`;
       actions = `<button class="btn btn-danger w-full text-base py-3.5" data-action="clockOut" data-id="${esc(r.id)}" data-start="${r.clockIn}"><i class="fa-solid fa-stop"></i> Selesai / Kembali (Clock Out)</button>`;
     } else if (r.status === 'DITOLAK') {
       timerBlock = `<div class="rounded-xl bg-red-500/10 border border-red-500/30 p-4 text-left">
@@ -763,7 +762,7 @@
     if (!s.me.isAtasan) return;
     const admin = s.me.isAdmin;
     $('#atasanScope').textContent = admin
-      ? 'Mode Admin: memantau seluruh pegawai kantor. Approval hanya untuk bawahan langsung Anda.'
+      ? 'Mode Admin: memantau dan dapat menyetujui permohonan seluruh pegawai, termasuk saat atasan langsung berhalangan.'
       : `Menampilkan ${s.me.jumlahBawahan} bawahan langsung Anda.`;
     $('#adminCard').classList.toggle('hidden', !admin);
 
@@ -773,7 +772,7 @@
         <p class="text-3xl sm:text-4xl font-extrabold mt-2 tracking-tight">${val}</p>
       </div>`;
     $('#statsGrid').innerHTML =
-      stat('Menunggu approval Anda', s.queue.length, 'fa-hourglass-half', 'text-amber-500') +
+      stat(admin ? 'Menunggu approval' : 'Menunggu approval Anda', s.queue.length, 'fa-hourglass-half', 'text-amber-500') +
       stat('Sedang di luar', s.live.length, 'fa-person-walking-arrow-right', 'text-gold') +
       stat('Disetujui, belum keluar', s.approved.length, 'fa-circle-check', 'text-djp-light') +
       stat('Selesai hari ini', s.selesaiHariIni, 'fa-flag-checkered', 'text-emerald-500');
@@ -789,17 +788,19 @@
             <div class="flex flex-wrap items-center gap-x-2"><p class="font-bold truncate">${esc(r.nama)}</p><span class="text-xs text-muted font-mono">${esc(r.nip)}</span></div>
             <p class="text-xs text-muted">${esc(r.seksi)} · diajukan ${fmtHM(r.dibuat)}, ${fmtDateShort(r.dibuat)}</p>
             <p class="text-sm mt-2"><span class="badge badge-ok mr-1">${esc(r.keperluan)}</span> ${esc(r.keterangan)}</p>
-            <p class="text-xs mt-2 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pakta integritas disetujui</p>
+            <p class="text-xs mt-2 text-muted"><i class="fa-solid fa-user-tie mr-1"></i>Atasan langsung: <b class="text-ink">${esc(r.namaAtasan)}</b>
+              ${r.nipAtasan !== s.me.nip ? '<span class="badge badge-wait ml-1">Anda mewakili sebagai Admin</span>' : ''}</p>
+            <p class="text-xs mt-1 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pakta integritas disetujui</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-4">
           <button class="btn btn-ghost btn-sm text-red-600 dark:text-red-400" data-action="reject" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-kep="${esc(r.keperluan)}"><i class="fa-solid fa-xmark"></i> Reject</button>
-          <button class="btn btn-success btn-sm" data-action="approve" data-id="${esc(r.id)}"><i class="fa-solid fa-check"></i> Approve</button>
+          <button class="btn btn-success btn-sm" data-action="approve" data-id="${esc(r.id)}" data-nama="${esc(r.nama)}" data-atasan="${esc(r.namaAtasan)}" data-wakil="${r.nipAtasan !== s.me.nip ? '1' : ''}"><i class="fa-solid fa-check"></i> Approve &amp; Clock In</button>
         </div>
       </article>`).join('') : `
       <div class="text-center py-8"><i class="fa-solid fa-inbox text-3xl text-muted/50"></i>
         <p class="font-semibold mt-2">Tidak ada permohonan yang menunggu</p>
-        <p class="text-sm text-muted">Permohonan baru dari bawahan Anda akan muncul di sini.</p></div>`;
+        <p class="text-sm text-muted">${s.me.isAdmin ? 'Permohonan baru dari seluruh pegawai akan muncul di sini.' : 'Permohonan baru dari bawahan Anda akan muncul di sini.'}</p></div>`;
 
     const others = s.queueOthers || [];
     $('#othersWrap').classList.toggle('hidden', !others.length);
@@ -858,7 +859,14 @@
       catch (ex) { if (!ex.code) toast(ex.message, 'error'); await refreshState(true); }
     };
 
-    if (act === 'approve') withBusy(btn, () => run('approve', null, 'Izin disetujui. Pegawai sudah bisa Clock In.'));
+    if (act === 'approve' && btn.dataset.wakil === '1') openModal({
+      title: 'Setujui sebagai Admin?',
+      body: `<p class="text-muted">Anda akan menyetujui izin <b class="text-ink">${esc(btn.dataset.nama)}</b> mewakili atasan langsungnya, <b class="text-ink">${esc(btn.dataset.atasan)}</b>.</p>
+             <p class="text-muted mt-2">Clock In langsung tercatat, dan nama Anda tercatat sebagai pemberi persetujuan dengan keterangan (Admin).</p>`,
+      okText: '<i class="fa-solid fa-check"></i> Approve &amp; Clock In', okClass: 'btn-success',
+      onOk: () => run('approve', null, 'Izin disetujui. Clock In otomatis tercatat dan timer pegawai mulai berjalan.')
+    });
+    else if (act === 'approve') withBusy(btn, () => run('approve', null, 'Izin disetujui. Clock In otomatis tercatat dan timer pegawai mulai berjalan.'));
     else if (act === 'clockIn') withBusy(btn, () => run('clockIn', null, 'Clock In tercatat. Hati-hati di jalan.'));
     else if (act === 'dismiss') withBusy(btn, () => run('dismiss'));
     else if (act === 'reject') openModal({
