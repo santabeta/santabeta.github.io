@@ -254,7 +254,7 @@
               <label class="flex gap-3 cursor-pointer">
                 <input id="fPakta" type="checkbox" class="mt-1 w-5 h-5 shrink-0 accent-[#0b2e59]">
                 <span class="text-sm leading-relaxed">
-                  <span class="font-bold block mb-1"><i class="fa-solid fa-shield-halved text-gold-dark mr-1"></i> Pakta Integritas</span>
+                  <span class="font-bold block mb-1"><i class="fa-solid fa-shield-halved text-gold-dark mr-1"></i> Pernyataan</span>
                   Saya menyatakan dengan sebenar-benarnya bahwa izin ini digunakan hanya untuk keperluan non-dinas yang saya sebutkan,
                   saya akan kembali ke kantor sesegera mungkin dan mencatat jam kembali (Clock Out), serta bersedia menerima sanksi
                   sesuai ketentuan disiplin PNS apabila keterangan ini tidak benar.
@@ -263,7 +263,7 @@
             </div>
 
             <div class="mt-6 flex flex-col-reverse sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <p class="text-xs text-muted"><i class="fa-solid fa-circle-info mr-1"></i> Centang pakta integritas untuk mengaktifkan tombol kirim.</p>
+              <p class="text-xs text-muted"><i class="fa-solid fa-circle-info mr-1"></i> Centang pernyataan untuk mengaktifkan tombol kirim.</p>
               <button id="btnSubmit" type="submit" class="btn btn-primary w-full sm:w-auto" disabled>
                 <i class="fa-solid fa-paper-plane"></i> Kirim Permohonan
               </button>
@@ -640,7 +640,7 @@
     const ket = $('#fKet').value.trim();
     if (!kep) return toast('Pilih jenis keperluan.', 'warn');
     if (ket.length < 5) { $('#fKet').focus(); return toast('Tulis detail keterangan (minimal 5 karakter).', 'warn'); }
-    if (!$('#fPakta').checked) return toast('Centang Pakta Integritas sebelum mengirim permohonan.', 'warn');
+    if (!$('#fPakta').checked) return toast('Centang Pernyataan sebelum mengirim permohonan.', 'warn');
     await withBusy($('#btnSubmit'), async () => {
       try {
         await call('submit', { keperluan: kep.value, keterangan: ket, pakta: true });
@@ -790,7 +790,7 @@
             <p class="text-sm mt-2"><span class="badge badge-ok mr-1">${esc(r.keperluan)}</span> ${esc(r.keterangan)}</p>
             <p class="text-xs mt-2 text-muted"><i class="fa-solid fa-user-tie mr-1"></i>Atasan langsung: <b class="text-ink">${esc(r.namaAtasan)}</b>
               ${r.nipAtasan !== s.me.nip ? '<span class="badge badge-wait ml-1">Anda mewakili sebagai Admin</span>' : ''}</p>
-            <p class="text-xs mt-1 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pakta integritas disetujui</p>
+            <p class="text-xs mt-1 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pernyataan disetujui</p>
           </div>
         </div>
         <div class="grid grid-cols-2 gap-2 mt-4">
@@ -986,7 +986,7 @@
     if (!REKAP.length) return toast('Tidak ada data pada periode/filter yang dipilih.', 'warn');
 
     const header = ['No', 'Tanggal', 'Nama Pegawai', 'NIP', 'Seksi', 'Keperluan', 'Detail Keterangan', 'Nama Atasan Approval',
-                    'Jam Clock In', 'Jam Clock Out', 'Total Durasi Keluar', 'Status Pakta Integritas', 'Status Akhir'];
+                    'Jam Clock In', 'Jam Clock Out', 'Total Durasi Keluar', 'Status Pernyataan', 'Status Akhir'];
     const rows = REKAP.map((r, i) => [i + 1, r.tanggal, r.nama, String(r.nip), r.seksi, r.keperluan, r.keterangan,
                                       r.atasan, r.jamIn, r.jamOut, r.durasi, r.pakta, r.statusAkhir]);
     const periode = `${fmtDateLong(f.start)} s.d. ${fmtDateLong(f.end)}`;
