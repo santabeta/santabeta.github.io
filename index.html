@@ -136,7 +136,7 @@
       <p id="loginErr" class="hidden mt-4 text-sm font-semibold text-red-600 dark:text-red-400 bg-red-500/10 rounded-lg p-3"></p>
       <button id="btnLogin" type="submit" class="btn btn-primary w-full mt-5"><i class="fa-solid fa-right-to-bracket"></i> Masuk</button>
       <p class="text-xs text-muted mt-4 leading-relaxed"><i class="fa-solid fa-circle-info mr-1"></i>
-        Belum punya PIN atau lupa PIN? Minta PIN awal ke Subbagian Umum dan Kepatuhan Internal.</p>
+        Belum punya PIN atau lupa PIN? Minta PIN awal ke Subbagian Umum dan Kepatuhan Internal (SUKI).</p>
     </form>
     <div id="installBox" class="hidden mt-4 card p-4 text-sm">
       <div class="flex items-start gap-3">
@@ -682,7 +682,7 @@
       if (r.status === 'MENUNGGU') {
         body += `<div class="mt-3 rounded-xl bg-gold/10 border border-gold/40 p-3 text-left text-sm">
           <p class="font-bold"><i class="fa-solid fa-bullhorn mr-1 text-gold-dark"></i> Sampaikan langsung kepada ${esc(r.namaAtasan)}</p>
-          <p class="text-muted mt-1">Izin Anda sudah berlaku dan Anda boleh berangkat. Beri tahu atasan agar menyetujuinya di aplikasi. Bila atasan sedang cuti atau berhalangan, minta persetujuan kepada petugas atau Kepala Subbagian UKI.</p></div>`;
+          <p class="text-muted mt-1">Izin Anda sudah berlaku dan Anda boleh berangkat. Beri tahu atasan agar menyetujuinya di aplikasi. Bila atasan sedang cuti atau berhalangan, minta persetujuan kepada petugas atau Kasuki.</p></div>`;
         actions = `<button class="btn btn-ghost w-full" data-action="editRange" data-id="${esc(r.id)}" data-nama="Anda" data-start="${r.clockIn}" data-end="${r.clockOut}"><i class="fa-solid fa-clock-rotate-left"></i> Ubah jam</button>
           <button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan izin</button>`;
       } else {
@@ -723,7 +723,7 @@
 
     const active = s.mine.filter(r => isOngoing(r) || (r.status === 'DITOLAK' && !r.ack));
     const notice = $('#formNotice');
-    const msg = me.atasan ? '' : '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Atasan langsung Anda belum terdaftar. Hubungi Subbagian Umum dan KI agar data diperbarui.';
+    const msg = me.atasan ? '' : '<i class="fa-solid fa-triangle-exclamation mr-1"></i> Atasan langsung Anda belum terdaftar. Hubungi SUKI agar data diperbarui.';
     notice.innerHTML = msg;
     notice.className = msg ? 'mt-4 rounded-xl p-4 text-sm font-semibold bg-red-500/10 text-red-700 dark:text-red-300' : 'hidden';
     $('#formFields').disabled = !!msg;
@@ -759,7 +759,7 @@
     $('#atasanScope').textContent = s.me.isAdmin
       ? 'Mode Admin: memantau, menyetujui, dan mengoreksi jam izin seluruh pegawai, termasuk saat atasan langsung berhalangan.'
       : s.me.isUKI
-        ? 'Subbagian UKI: dapat menyetujui dan mengoreksi jam izin seluruh pegawai bila atasan langsung berhalangan.'
+        ? 'SUKI: dapat menyetujui dan mengoreksi jam izin seluruh pegawai bila atasan langsung berhalangan.'
         : `Menampilkan ${s.me.jumlahBawahan} bawahan langsung Anda.`;
     $('#adminCard').classList.toggle('hidden', !s.me.isAdmin);
 
@@ -788,7 +788,7 @@
             <p class="text-sm mt-2"><i class="fa-regular fa-clock mr-1 text-muted"></i><b class="timer">${rangeText(r)}</b> <span class="text-muted">(${fmtDur(r.durasiDetik)})</span>
               <span class="badge ${now() < r.clockIn ? 'badge-ok' : now() < r.clockOut ? 'badge-run' : 'badge-done'} ml-1">${now() < r.clockIn ? 'Terjadwal' : now() < r.clockOut ? 'Sedang di luar' : 'Sudah lewat'}</span></p>
             <p class="text-xs mt-2 text-muted"><i class="fa-solid fa-user-tie mr-1"></i>Atasan langsung: <b class="text-ink">${esc(r.namaAtasan)}</b>
-              ${r.nipAtasan !== s.me.nip ? `<span class="badge badge-wait ml-1">Anda mewakili sebagai ${s.me.isAdmin ? 'Admin' : 'petugas UKI'}</span>` : ''}</p>
+              ${r.nipAtasan !== s.me.nip ? `<span class="badge badge-wait ml-1">Anda mewakili sebagai ${s.me.isAdmin ? 'Admin' : 'petugas SUKI'}</span>` : ''}</p>
             <p class="text-xs mt-1 text-emerald-600 dark:text-emerald-400 font-semibold"><i class="fa-solid fa-signature"></i> Pernyataan disetujui</p>
           </div>
         </div>
@@ -895,7 +895,7 @@
     };
 
     if (act === 'approve' && btn.dataset.wakil === '1') {
-      const sebagai = STATE.me.isAdmin ? 'Admin' : 'UKI';
+      const sebagai = STATE.me.isAdmin ? 'Admin' : 'SUKI';
       openModal({
         title: `Setujui sebagai ${sebagai}?`,
         body: `<p class="text-muted">Anda akan menyetujui izin <b class="text-ink">${esc(btn.dataset.nama)}</b> mewakili atasan langsungnya, <b class="text-ink">${esc(btn.dataset.atasan)}</b>.</p>
