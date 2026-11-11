@@ -679,14 +679,16 @@
       const mulai = t < r.clockIn;
       body = `<p class="text-xs text-muted">${mulai ? 'Mulai pukul ' + fmtHM(r.clockIn) + ' · sisa waktu hingga mulai' : 'Sedang berlangsung · sisa waktu hingga kembali'}</p>
         <div class="timer text-4xl sm:text-5xl font-bold text-navy-800 dark:text-gold mt-1" data-countdown-end="${mulai ? r.clockIn : r.clockOut}">${fmtHMS((mulai ? r.clockIn : r.clockOut) - t)}</div>`;
+      const coBtn = mulai ? '' : `<button class="btn btn-danger w-full" data-action="clockOutEarly" data-id="${esc(r.id)}" data-end="${r.clockOut}"><i class="fa-solid fa-door-closed"></i> Clock Out (sudah kembali)</button>`;
       if (r.status === 'MENUNGGU') {
         body += `<div class="mt-3 rounded-xl bg-gold/10 border border-gold/40 p-3 text-left text-sm">
           <p class="font-bold"><i class="fa-solid fa-bullhorn mr-1 text-gold-dark"></i> Sampaikan langsung kepada ${esc(r.namaAtasan)}</p>
           <p class="text-muted mt-1">Izin Anda sudah berlaku dan Anda boleh berangkat. Beri tahu atasan agar menyetujuinya di aplikasi. Bila atasan sedang cuti atau berhalangan, minta persetujuan kepada petugas atau Kasuki.</p></div>`;
-        actions = `<button class="btn btn-ghost w-full" data-action="editRange" data-id="${esc(r.id)}" data-nama="Anda" data-start="${r.clockIn}" data-end="${r.clockOut}"><i class="fa-solid fa-clock-rotate-left"></i> Ubah jam</button>
+        actions = coBtn + `<button class="btn btn-ghost w-full" data-action="editRange" data-id="${esc(r.id)}" data-nama="Anda" data-start="${r.clockIn}" data-end="${r.clockOut}"><i class="fa-solid fa-clock-rotate-left"></i> Ubah jam</button>
           <button class="btn btn-ghost w-full" data-action="cancel" data-id="${esc(r.id)}"><i class="fa-solid fa-ban"></i> Batalkan izin</button>`;
       } else {
         body += `<p class="text-sm text-muted mt-3"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Disetujui oleh <b class="text-ink">${esc(r.diputuskanOleh)}</b> pukul ${fmtHM(r.diputuskan)}</p>`;
+        actions = coBtn;
       }
       if (r.catatan) body += `<p class="text-xs mt-2 text-gold-dark dark:text-gold"><i class="fa-solid fa-clock-rotate-left mr-1"></i>${esc(r.catatan)}</p>`;
     }
@@ -905,6 +907,17 @@
       });
     }
     else if (act === 'approve') withBusy(btn, () => run('approve', null, 'Izin disetujui.'));
+    else if (act === 'clockOutEarly') openModal({
+      title: 'Clock Out sekarang?',
+      body: `<p class="text-muted">Jam kembali akan dicatat <b class="text-ink">${fmtHM(now())} WITA</b> (rencana ${fmtHM(Number(btn.dataset.end))}). Durasi izin dihitung ulang.</p>
+             <p class="text-muted mt-2">Gunakan bila Anda sudah kembali ke kantor lebih awal dari rencana.</p>`,
+      okText: '<i class="fa-solid fa-door-closed"></i> Clock Out', okClass: 'btn-danger',
+      onOk: async () => {
+        try { const r = await call('clockOut', { id }); toast(`Clock Out tercatat. Total durasi izin: ${fmtDur(r.durasiDetik)}.`); }
+        catch (ex) { if (!ex.code) toast(ex.message, 'error'); }
+        await refreshState(true);
+      }
+    });
     else if (act === 'setRange' || act === 'editRange') {
       const a0 = Number(btn.dataset.start), b0 = Number(btn.dataset.end);
       openModal({
