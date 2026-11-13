@@ -252,7 +252,7 @@
                 <label class="label" for="fKet">Deskripsi</label>
                 <span id="ketCount" class="text-[0.7rem] text-muted mb-1.5">0/300</span>
               </div>
-              <textarea id="fKet" class="field resize-y min-h-[96px]" maxlength="300" placeholder="Jelaskan tujuan dan tempat. Contoh: Menyetor angsuran di Bank BRI Unit Raba."></textarea>
+              <textarea id="fKet" class="field resize-y min-h-[96px]" maxlength="300" placeholder="Jelaskan tujuan dan tempat. Contoh: Setor angsuran di Bank BRI Unit Raba."></textarea>
             </div>
 
             <div class="mt-5 rounded-xl border border-gold/50 bg-gold/10 p-4">
@@ -263,6 +263,7 @@
                   Saya menyatakan dengan sebenar-benarnya bahwa izin ini digunakan hanya untuk keperluan non-dinas yang saya sebutkan,
                   saya akan kembali ke kantor sesuai rentang jam yang saya isi, serta bersedia menerima sanksi
                   sesuai ketentuan disiplin PNS apabila keterangan ini tidak benar.
+                  <span class="block mt-1.5 font-semibold">Segala bentuk kecurangan (fraud) atas izin ini, termasuk keterangan palsu dan penyalahgunaan izin, sepenuhnya menjadi tanggung jawab saya pribadi.</span>
                 </span>
               </label>
             </div>
@@ -397,7 +398,7 @@
   const TKEY = 'izinKPPRabaBima_token';
   const POLL_MS = 15000;
   const LONG_OUT_MS = 2 * 60 * 60 * 1000;
-  const KEPERLUAN = ['Ke Bank', 'Rumah Sakit', 'Force Majeure', 'Melayat'];
+  const KEPERLUAN = ['Bank', 'Rumah Sakit', 'Force Majeure', 'Melayat'];
   const STATUS = {
     MENUNGGU:    { label:'Belum Disetujui',          cls:'badge-wait',   icon:'fa-hourglass-half' },
     DISETUJUI:   { label:'Disetujui',                cls:'badge-ok',     icon:'fa-circle-check' },
