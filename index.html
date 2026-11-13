@@ -244,15 +244,15 @@
               <div><label class="label" for="fJamKembali">Jam kembali</label><input id="fJamKembali" type="time" class="field font-mono"></div>
             </div>
             <p id="rangeInfo" class="text-xs text-muted mt-1.5 mb-5">Hari ini (WITA).</p>
-            <div class="label">Keperluan</div>
-            <div id="keperluanGrid" class="grid grid-cols-2 sm:grid-cols-4 gap-2.5"></div>
+            <label class="label" for="fKep">Keperluan</label>
+            <select id="fKep" class="field"></select>
 
             <div class="mt-5">
               <div class="flex items-end justify-between">
-                <label class="label" for="fKet">Detail keterangan</label>
+                <label class="label" for="fKet">Deskripsi</label>
                 <span id="ketCount" class="text-[0.7rem] text-muted mb-1.5">0/300</span>
               </div>
-              <textarea id="fKet" class="field resize-y min-h-[96px]" maxlength="300" placeholder="Contoh: Menyetor angsuran di Bank BRI Unit Raba, perkiraan 45 menit."></textarea>
+              <textarea id="fKet" class="field resize-y min-h-[96px]" maxlength="300" placeholder="Jelaskan tujuan dan tempat. Contoh: Menyetor angsuran di Bank BRI Unit Raba."></textarea>
             </div>
 
             <div class="mt-5 rounded-xl border border-gold/50 bg-gold/10 p-4">
@@ -397,10 +397,7 @@
   const TKEY = 'izinKPPRabaBima_token';
   const POLL_MS = 15000;
   const LONG_OUT_MS = 2 * 60 * 60 * 1000;
-  const KEPERLUAN = [
-    { v:'Ke Bank', icon:'fa-building-columns' }, { v:'RS/Klinik', icon:'fa-hospital' },
-    { v:'Keluarga/Pribadi', icon:'fa-people-roof' }, { v:'Lainnya', icon:'fa-ellipsis' }
-  ];
+  const KEPERLUAN = ['Ke Bank', 'Rumah Sakit', 'Force Majeure', 'Melayat'];
   const STATUS = {
     MENUNGGU:    { label:'Belum Disetujui',          cls:'badge-wait',   icon:'fa-hourglass-half' },
     DISETUJUI:   { label:'Disetujui',                cls:'badge-ok',     icon:'fa-circle-check' },
@@ -624,31 +621,22 @@
   $$('.tab-btn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
 
   /* ===================== FORM PEGAWAI ===================== */
-  $('#keperluanGrid').innerHTML = KEPERLUAN.map(k => `
-    <label class="cursor-pointer">
-      <input type="radio" name="keperluan" value="${esc(k.v)}" class="peer sr-only">
-      <div class="h-full rounded-xl border border-line bg-surface2 px-3 py-3 text-center transition
-                  peer-checked:border-navy-800 peer-checked:bg-navy-800 peer-checked:text-white
-                  peer-focus-visible:ring-4 peer-focus-visible:ring-gold/50 hover:border-djp-light">
-        <i class="fa-solid ${k.icon} text-lg mb-1 block"></i>
-        <span class="text-xs sm:text-[0.8rem] font-bold">${esc(k.v)}</span>
-      </div>
-    </label>`).join('');
+  $('#fKep').innerHTML = '<option value="">Pilih keperluan…</option>' + KEPERLUAN.map(k => `<option value="${esc(k)}">${esc(k)}</option>`).join('');
   $('#fPakta').addEventListener('change', e => { $('#btnSubmit').disabled = !e.target.checked; });
   $('#fKet').addEventListener('input', e => { $('#ketCount').textContent = `${e.target.value.length}/300`; });
 
   $('#formIzin').addEventListener('submit', async e => {
     e.preventDefault();
-    const kep = $('input[name="keperluan"]:checked');
+    const kep = $('#fKep');
     const ket = $('#fKet').value.trim();
-    if (!kep) return toast('Pilih jenis keperluan.', 'warn');
-    if (ket.length < 5) { $('#fKet').focus(); return toast('Tulis detail keterangan (minimal 5 karakter).', 'warn'); }
+    if (!kep.value) { kep.focus(); return toast('Pilih jenis keperluan.', 'warn'); }
+    if (ket.length < 5) { $('#fKet').focus(); return toast('Tulis deskripsi (minimal 5 karakter).', 'warn'); }
     if (!$('#fPakta').checked) return toast('Centang Pernyataan sebelum mengirim permohonan.', 'warn');
     const rg = readRange('#fJamKeluar', '#fJamKembali'); if (!rg) return;
     await withBusy($('#btnSubmit'), async () => {
       try {
         await call('submit', { keperluan: kep.value, keterangan: ket, pakta: true, jamKeluar: rg.a, jamKembali: rg.b });
-        kep.checked = false; $('#fKet').value = ''; $('#ketCount').textContent = '0/300'; $('#fPakta').checked = false;
+        kep.value = ''; $('#fKet').value = ''; $('#ketCount').textContent = '0/300'; $('#fPakta').checked = false;
         $('#fJamKeluar').value = ''; $('#fJamKembali').value = ''; setDefaultRange();
         toast('Izin tercatat dan langsung berlaku. Sampaikan kepada atasan Anda untuk menyetujui.');
         await refreshState(true);
@@ -772,7 +760,7 @@
       </div>`;
     $('#statsGrid').innerHTML =
       stat(admin ? 'Menunggu approval' : 'Menunggu approval Anda', s.queue.length, 'fa-hourglass-half', 'text-amber-500') +
-      stat('Sedang di luar', s.live.length, 'fa-person-walking-arrow-right', 'text-gold') +
+      stat('Sedang di luar', s.live.filter(r => !r.clockOut || r.clockOut > now()).length, 'fa-person-walking-arrow-right', 'text-gold') +
       stat('Terjadwal hari ini', s.approved.length, 'fa-calendar-day', 'text-djp-light') +
       stat('Selesai hari ini', s.selesaiHariIni, 'fa-flag-checkered', 'text-emerald-500');
 
@@ -811,8 +799,9 @@
         <span class="text-xs text-muted shrink-0">ke ${esc(r.namaAtasan)}</span>
       </div>`).join('');
 
-    $('#liveCount').textContent = `${s.live.length} pegawai`;
-    $('#liveList').innerHTML = s.live.length ? s.live.map(r => {
+    const liveNow = s.live.filter(r => !r.clockOut || r.clockOut > now());
+    $('#liveCount').textContent = `${liveNow.length} pegawai`;
+    $('#liveList').innerHTML = liveNow.length ? liveNow.map(r => {
       const long = now() - r.clockIn > LONG_OUT_MS;
       return `<div class="rounded-xl border ${long ? 'border-red-500/50 bg-red-500/5' : 'border-gold/40 bg-gold/5'} p-4 flex items-center gap-3" data-long-start="${r.clockIn}">
         <div class="w-10 h-10 shrink-0 rounded-xl bg-gold text-navy-900 grid place-items-center font-extrabold text-sm">${esc(initials(r.nama))}</div>
@@ -1100,7 +1089,14 @@
     $('#hdrTime').textContent = `${p.hour}.${p.minute}.${p.second}`;
     $('#hdrDate').textContent = new Date(t).toLocaleDateString('id-ID', { timeZone: TZ, weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) + ' · WITA';
     $$('[data-timer-start]').forEach(el => { el.textContent = fmtHMS(t - Number(el.dataset.timerStart)); });
-    $$('[data-countdown-end]').forEach(el => { el.textContent = fmtHMS(Number(el.dataset.countdownEnd) - t); });
+    // Hitung mundur; begitu ada yang mencapai nol (izin mulai / berakhir), tampilan disusun ulang
+    let lewat = false;
+    $$('[data-countdown-end]').forEach(el => {
+      const sisa = Number(el.dataset.countdownEnd) - t;
+      el.textContent = fmtHMS(sisa);
+      if (sisa <= 0) lewat = true;
+    });
+    if (lewat && STATE) renderAll();
   }
   setInterval(tick, 1000);
 
